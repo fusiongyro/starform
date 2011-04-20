@@ -27,9 +27,9 @@ init(void)
   struct timeb grap;
   long         seed;
 
-  if (sf_f_seed)
+  if (args.random_seed)
   {
-    seed = sf_f_seed;
+    seed = args.random_seed;
   }
   else
   {
@@ -37,7 +37,7 @@ init(void)
     seed = (long)grap.time * 1000 + grap.millitm;
   }
   (void)srand(seed);
-  if (sf_f_lisp)
+  if (args.display_lisp)
     printf("(Accrete (version %s) (seed 0x%.8lx))\n", "3.0", seed);
   else
     printf("Accrete - V%s; seed=0x%.8lx\n", "3.0", seed);
@@ -131,7 +131,7 @@ generate_stellar_system(void)
       iterate_surface_temp(&(planet));
     }
 #ifdef	MOON
-    if (sf_f_moon)
+    if (args.make_moon)
     {
 #ifdef  PROPER_MOON
       planet->first_moon = dist_moon_masses(planet->mass,

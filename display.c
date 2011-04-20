@@ -511,9 +511,9 @@ lisp_describe_system(planet_pointer first_planet)
 void 
 display_system(planet_pointer first_planet)
 {
-  if (sf_f_graphics)
+  if (args.display_graphics)
     chart_system(first_planet);
-  else if (sf_f_lisp)
+  else if (args.display_lisp)
     lisp_describe_system(first_planet);
   else
     text_describe_system(first_planet);

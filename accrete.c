@@ -310,9 +310,9 @@ void coalesce_planetesimals(accretion *accretion, double a, double e, double mas
     }
     if (fabs(temp) <= fabs(dist1) || fabs(temp) <= fabs(dist2))
     {
-      if (sf_f_verbose)
+      if (args.verbose)
       {
-        if (sf_f_lisp)
+        if (args.display_lisp)
           printf(";Collision between two planetesimals!\n");
         else
           printf("Collision between two planetesimals!\n");
@@ -396,9 +396,9 @@ planet_pointer dist_planetary_masses(double star_mass_r, double star_lum_r, doub
     a = random_number(planet_inner_bound, planet_outer_bound);
     e = random_eccentricity();
     mass = PROTOPLANET_MASS;
-    if (sf_f_verbose)
+    if (args.verbose)
     {
-      if (sf_f_lisp)
+      if (args.display_lisp)
         printf(";Checking %g AU.\n", a);
       else
         printf("Checking %g AU.\n", a);
@@ -407,9 +407,9 @@ planet_pointer dist_planetary_masses(double star_mass_r, double star_lum_r, doub
                        inner_effect_limit(accretion, a, e, mass),
                        outer_effect_limit(accretion, a, e, mass)))
     {
-      if (sf_f_verbose)
+      if (args.verbose)
       {
-        if (sf_f_lisp)
+        if (args.display_lisp)
           printf(";.. Injecting protoplanet.\n");
         else
           printf(".. Injecting protoplanet.\n");
@@ -431,17 +431,17 @@ planet_pointer dist_planetary_masses(double star_mass_r, double star_lum_r, doub
                                star_lum_r,
                                planet_inner_bound, planet_outer_bound);
       }
-      else if (sf_f_verbose)
+      else if (args.verbose)
       {
-        if (sf_f_lisp)
+        if (args.display_lisp)
           printf(";.. failed due to large neighbor.\n");
         else
           printf(".. failed due to large neighbor.\n");
       }
     }
-    else if (sf_f_verbose)
+    else if (args.verbose)
     {
-      if (sf_f_lisp)
+      if (args.display_lisp)
         printf(";.. failed.\n");
       else
         printf(".. failed.\n");
@@ -490,7 +490,7 @@ planet_pointer do_dist_moon_masses(double planetary_mass, double plan_radius)
   maxcount = (int)random_number(maxcount / 10, maxcount);
   maxdist *= random_number(0.5, 1.5);
 
-  if (sf_f_verbose)
+  if (args.verbose)
   {
     printf("\npmass = %g Me, prad = %g AU\n", pmass, prad);
     printf("mindist = %g AU, maxdist = %g AU\n", mindist, maxdist);
@@ -509,7 +509,7 @@ planet_pointer do_dist_moon_masses(double planetary_mass, double plan_radius)
 
     volatile double dist = sqrt(mass) * 50000 / KM_PER_AU;
 
-    if (sf_f_verbose)
+    if (args.verbose)
     {
       printf("mmin = %g Me, mmax = %g Me, mass = %g Me\n",
              massmin, massmax, mass);

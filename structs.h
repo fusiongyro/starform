@@ -1,6 +1,8 @@
 #ifndef _STRUCTS_H
 #define _STRUCTS_H
 
+#include <stdbool.h>
+
 typedef struct dust_record *dust_pointer;
 typedef struct planets_record *planet_pointer;
 
@@ -60,5 +62,16 @@ typedef struct
   double      cloud_eccen;
   dust_pointer dust_head;  
 } accretion;
+
+typedef struct 
+{
+  bool make_moon;
+  bool display_lisp;
+  bool display_graphics;
+  unsigned long random_seed;
+  bool verbose;
+} flags;
+
+flags args;
 
 #endif

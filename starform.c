@@ -23,8 +23,7 @@
 #include "propert.h"
 #include "data.h"
 
-int
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
   char       *c,
              *prognam;
@@ -38,20 +37,20 @@ main(int argc, char **argv)
       switch (*c)
       {
       case 'm':		/* set moon output */
-	++sf_f_moon;
+	args.make_moon = true;
 	break;
       case 'l':		/* set lisp output */
-	++sf_f_lisp;
+	args.display_lisp = true;
 	break;
       case 'g':		/* display graphically */
-	++sf_f_graphics;
+	args.display_graphics = true;
 	break;
       case 's':		/* set random seed */
-	sf_f_seed = strtoul(&(*++c), NULL, 0);
+	args.random_seed = strtoul(&(*++c), NULL, 0);
 	skip = TRUE;
 	break;
       case 'v':		/* increment verbosity */
-	++sf_f_verbose;
+	args.verbose = true;
 	break;
       case 'n':
 	nstars = strtoul(&(*++c), NULL, 0);

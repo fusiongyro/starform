@@ -6,6 +6,8 @@
 #include "utils.h"
 #include "data.h"
 
+extern flags args;
+
 accretion* make_accretion(
   double inner_limit_of_dust,
   double outer_limit_of_dust);

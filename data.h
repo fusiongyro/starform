@@ -3,12 +3,6 @@
 
 #include "const.h"
 
-extern int         sf_f_verbose;
-extern long        sf_f_seed;
-extern int         sf_f_lisp;
-extern int         sf_f_moon;
-extern int         sf_f_graphics;
-
 extern double      star_mass_r;
 extern double      star_lum_r;
 extern double      star_radius_r;
