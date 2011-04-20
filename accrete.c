@@ -9,33 +9,9 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "const.h"
-#include "structs.h"
 #include "accrete.h"
-#include "utils.h"
-#include "data.h"
-
-#ifdef SF_FIND_FPOFLO
-
-#include <ieeefp.h>
-
-#define testnan(x)  if (isnan(x)) nanabort(__FUNCTION__, #x, "NAN")
-#define testinf(x)  if (!finite(x)) nanabort(__FUNCTION__, #x, "Infinite")
-
-#define testfp(x)  do { testnan(x); testinf(x); } while (0)
-
-void 
-nanabort(const char *where, const char *what, const char *type)
-{
-  fprintf(stderr, "ERROR in %s: %s is %s!\n", where, what, type);
-  abort();
-}
-
-#else
 
 #define testfp(x)
-
-#endif
 
 /* A few variables global to the entire program:                */
 static planet_pointer planet_head;
@@ -49,8 +25,7 @@ static double      dust_density;
 static double      cloud_eccen;
 static dust_pointer dust_head;
 
-void 
-set_initial_conditions(double inner_limit_of_dust, double outer_limit_of_dust)
+void set_initial_conditions(double inner_limit_of_dust, double outer_limit_of_dust)
 {
   dust_head = (dust *) calloc(1, sizeof(dust));
   planet_head = NULL;
@@ -63,38 +38,32 @@ set_initial_conditions(double inner_limit_of_dust, double outer_limit_of_dust)
   cloud_eccen = 0.2;
 }
 
-double 
-stellar_dust_limit(double star_mass_r)
+double stellar_dust_limit(double star_mass_r)
 {
   return (200.0 * pow(star_mass_r, (1.0 / 3.0)));
 }
 
-double 
-nearest_planet(double star_mass_r)
+double nearest_planet(double star_mass_r)
 {
   return (0.3 * pow(star_mass_r, (1.0 / 3.0)));
 }
 
-double 
-farthest_planet(double star_mass_r)
+double farthest_planet(double star_mass_r)
 {
   return (50.0 * pow(star_mass_r, (1.0 / 3.0)));
 }
 
-double 
-inner_effect_limit(double a, double e, double mass)
+double inner_effect_limit(double a, double e, double mass)
 {
   return (a * (1.0 - e) * (1.0 - mass) / (1.0 + cloud_eccen));
 }
 
-double 
-outer_effect_limit(double a, double e, double mass)
+double outer_effect_limit(double a, double e, double mass)
 {
   return (a * (1.0 + e) * (1.0 + mass) / (1.0 - cloud_eccen));
 }
 
-int 
-dust_available(double inside_range, double outside_range)
+int dust_available(double inside_range, double outside_range)
 {
   dust_pointer current_dust_band;
   int         dust_here;
@@ -116,8 +85,7 @@ dust_available(double inside_range, double outside_range)
   return (dust_here);
 }
 
-void 
-update_dust_lanes(double min, double max, double mass, double crit_mass, double body_inner_bound, double body_outer_bound)
+void update_dust_lanes(double min, double max, double mass, double crit_mass, double body_inner_bound, double body_outer_bound)
 {
   int         gas;
   dust_pointer node1,
@@ -217,8 +185,7 @@ update_dust_lanes(double min, double max, double mass, double crit_mass, double 
   }
 }
 
-double 
-collect_dust(double last_mass, double a, double e, double crit_mass, dust_pointer dust_band)
+double collect_dust(double last_mass, double a, double e, double crit_mass, dust_pointer dust_band)
 {
   double      mass_density,
               temp1,
@@ -279,8 +246,7 @@ collect_dust(double last_mass, double a, double e, double crit_mass, dust_pointe
 /*  in units of solar masses.                                               */
 /*--------------------------------------------------------------------------*/
 
-double 
-critical_limit(double orb_radius, double eccentricity, double star_lum_r)
+double critical_limit(double orb_radius, double eccentricity, double star_lum_r)
 {
   double      temp,
               perihelion_dist;
@@ -290,8 +256,7 @@ critical_limit(double orb_radius, double eccentricity, double star_lum_r)
   return (B * pow(temp, -0.75));
 }
 
-void 
-accrete_dust(double *seed_mass, double a, double e, double crit_mass, double body_inner_bound, double body_outer_bound)
+void accrete_dust(double *seed_mass, double a, double e, double crit_mass, double body_inner_bound, double body_outer_bound)
 {
   double      new_mass,
               temp_mass;
@@ -312,8 +277,7 @@ accrete_dust(double *seed_mass, double a, double e, double crit_mass, double bod
   update_dust_lanes(r_inner, r_outer, (*seed_mass), crit_mass, body_inner_bound, body_outer_bound);
 }
 
-void 
-coalesce_planetesimals(double a, double e, double mass, double crit_mass, double star_lum_r, double body_inner_bound, double body_outer_bound)
+void coalesce_planetesimals(double a, double e, double mass, double crit_mass, double star_lum_r, double body_inner_bound, double body_outer_bound)
 {
   planet_pointer node1 = NULL;
   planet_pointer node2 = NULL;
@@ -417,8 +381,7 @@ coalesce_planetesimals(double a, double e, double mass, double crit_mass, double
   }
 }
 
-planet_pointer 
-dist_planetary_masses(double star_mass_r, double star_lum_r, double inner_dust, double outer_dust)
+planet_pointer dist_planetary_masses(double star_mass_r, double star_lum_r, double inner_dust, double outer_dust)
 {
   double      a,
               e,
@@ -489,8 +452,7 @@ dist_planetary_masses(double star_mass_r, double star_lum_r, double inner_dust, 
 }
 
 #ifdef  PROPER_MOON
-planet_pointer 
-dist_moon_masses(planetary_mass, star_lum_r,
+planet_pointer dist_moon_masses(planetary_mass, star_lum_r,
                  planet_eccentricity, inner_dust, outer_dust)
 double      planetary_mass,
             star_lum_r,
@@ -508,8 +470,7 @@ double      planetary_mass,
   return (NULL);
 }
 #else
-planet_pointer 
-do_dist_moon_masses(double planetary_mass, double plan_radius)
+planet_pointer do_dist_moon_masses(double planetary_mass, double plan_radius)
 {
   planet_pointer head,
               moon,

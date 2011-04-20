@@ -1,7 +1,7 @@
 #ifndef _ACCRETE_H
 #define _ACCRETE_H
 
-#include "const.h"
+//#include "const.h"
 #include "structs.h"
 #include "utils.h"
 #include "data.h"
