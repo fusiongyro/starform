@@ -23,9 +23,9 @@ accretion* make_accretion(double inner_limit_of_dust, double outer_limit_of_dust
   result->dust_head->next_band = NULL;
   result->dust_head->outer_edge = outer_limit_of_dust;
   result->dust_head->inner_edge = inner_limit_of_dust;
-  result->dust_head->dust_present = TRUE;
-  result->dust_head->gas_present = TRUE;
-  result->dust_left = TRUE;
+  result->dust_head->dust_present = true;
+  result->dust_head->gas_present = true;
+  result->dust_left = true;
   result->cloud_eccen = 0.2;
   
   return result;
@@ -72,7 +72,7 @@ int dust_available(accretion* accretion, double inside_range, double outside_ran
          && current_dust_band->outer_edge < inside_range)
     current_dust_band = current_dust_band->next_band;
   if (current_dust_band == NULL)
-    dust_here = FALSE;
+    dust_here = false;
   else
     dust_here = current_dust_band->dust_present;
   while (current_dust_band != NULL
@@ -91,11 +91,11 @@ void update_dust_lanes(accretion *accretion, double min, double max, double mass
               node2,
               node3;
 
-  accretion->dust_left = FALSE;
+  accretion->dust_left = false;
   if (mass > crit_mass)
-    gas = FALSE;
+    gas = false;
   else
-    gas = TRUE;
+    gas = true;
   node1 = accretion->dust_head;
   while (node1 != NULL)
   {
@@ -104,11 +104,11 @@ void update_dust_lanes(accretion *accretion, double min, double max, double mass
       node2 = (dust *) calloc(1, sizeof(dust));
       node2->inner_edge = min;
       node2->outer_edge = max;
-      if (node1->gas_present == TRUE)
+      if (node1->gas_present == true)
         node2->gas_present = gas;
       else
-        node2->gas_present = FALSE;
-      node2->dust_present = FALSE;
+        node2->gas_present = false;
+      node2->dust_present = false;
       node3 = (dust *) calloc(1, sizeof(dust));
       node3->inner_edge = max;
       node3->outer_edge = node1->outer_edge;
@@ -130,22 +130,22 @@ void update_dust_lanes(accretion *accretion, double min, double max, double mass
       node2->inner_edge = max;
       node1->next_band = node2;
       node1->outer_edge = max;
-      if (node1->gas_present == TRUE)
+      if (node1->gas_present == true)
         node1->gas_present = gas;
       else
-        node1->gas_present = FALSE;
-      node1->dust_present = FALSE;
+        node1->gas_present = false;
+      node1->dust_present = false;
       node1 = node2->next_band;
     }
     else if (node1->inner_edge < min && node1->outer_edge > min)
     {
       node2 = (dust *) calloc(1, sizeof(dust));
       node2->next_band = node1->next_band;
-      node2->dust_present = FALSE;
-      if (node1->gas_present == TRUE)
+      node2->dust_present = false;
+      if (node1->gas_present == true)
         node2->gas_present = gas;
       else
-        node2->gas_present = FALSE;
+        node2->gas_present = false;
       node2->outer_edge = node1->outer_edge;
       node2->inner_edge = min;
       node1->next_band = node2;
@@ -154,9 +154,9 @@ void update_dust_lanes(accretion *accretion, double min, double max, double mass
     }
     else if (node1->inner_edge >= min && node1->outer_edge <= max)
     {
-      if (node1->gas_present == TRUE)
+      if (node1->gas_present == true)
         node1->gas_present = gas;
-      node1->dust_present = FALSE;
+      node1->dust_present = false;
       node1 = node1->next_band;
     }
     else if (node1->outer_edge < min || node1->inner_edge > max)
@@ -168,7 +168,7 @@ void update_dust_lanes(accretion *accretion, double min, double max, double mass
     if (node1->dust_present
          && node1->outer_edge >= body_inner_bound
               && node1->inner_edge <= body_outer_bound)
-      accretion->dust_left = TRUE;
+      accretion->dust_left = true;
     node2 = node1->next_band;
     if (node2 != NULL)
     {
@@ -205,11 +205,11 @@ double collect_dust(accretion *accretion, double last_mass, double a, double e, 
     return (0.0);
   else
   {
-    if (dust_band->dust_present == FALSE)
+    if (dust_band->dust_present == false)
       temp_density = 0.0;
     else
       temp_density = accretion->dust_density;
-    if (last_mass < crit_mass || dust_band->gas_present == FALSE)
+    if (last_mass < crit_mass || dust_band->gas_present == false)
       mass_density = temp_density;
     else
       mass_density = K * temp_density / (1.0 + sqrt(crit_mass / last_mass)
@@ -287,7 +287,7 @@ void coalesce_planetesimals(accretion *accretion, double a, double e, double mas
   double      dist2;
   double      a3;
 
-  finished = FALSE;
+  finished = false;
   node1 = accretion->planet_head;
   while (node1 != NULL)
   {
@@ -328,7 +328,7 @@ void coalesce_planetesimals(accretion *accretion, double a, double e, double mas
       node1->e = e;
       node1->mass = temp;
       node1 = NULL;
-      finished = TRUE;
+      finished = true;
     }
     else
       node1 = node1->next_planet;
@@ -339,9 +339,9 @@ void coalesce_planetesimals(accretion *accretion, double a, double e, double mas
     node3->a = a;
     node3->e = e;
     if (mass >= crit_mass)
-      node3->gas_giant = TRUE;
+      node3->gas_giant = true;
     else
-      node3->gas_giant = FALSE;
+      node3->gas_giant = false;
     node3->mass = mass;
     if (accretion->planet_head == NULL)
     {

@@ -85,9 +85,9 @@ generate_stellar_system(void)
     }
     else
     {
+      planet->density = volume_density(planet->mass, planet->radius);
       planet->radius = kothari_radius(planet->mass, planet->gas_giant, 
                                       planet->orbit_zone);
-      planet->density = volume_density(planet->mass, planet->radius);
     }
     planet->orb_period = period(planet->a, planet->mass, star_mass_r);
     planet->day = day_length(planet->mass, planet->radius, planet->e,
@@ -103,7 +103,7 @@ generate_stellar_system(void)
     if ((planet->gas_giant))
     {
       planet->surf_grav = INCREDIBLY_LARGE_NUMBER;
-      planet->greenhouse_effect = FALSE;
+      planet->greenhouse_effect = false;
       planet->volatile_gas_inventory = INCREDIBLY_LARGE_NUMBER;
       planet->surf_pressure = INCREDIBLY_LARGE_NUMBER;
       planet->boil_point = INCREDIBLY_LARGE_NUMBER;

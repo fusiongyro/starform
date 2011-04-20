@@ -1,10 +1,10 @@
 #include "data.h"
 
-int         sf_f_verbose = FALSE;
-long        sf_f_seed = FALSE;
-int         sf_f_lisp = FALSE;
-int         sf_f_moon = FALSE;
-int         sf_f_graphics = FALSE;
+int         sf_f_verbose = false;
+long        sf_f_seed = false;
+int         sf_f_lisp = false;
+int         sf_f_moon = false;
+int         sf_f_graphics = false;
 double      star_mass_r;
 double      star_lum_r;
 double      star_radius_r;

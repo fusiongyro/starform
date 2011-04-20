@@ -33,7 +33,7 @@ int main(int argc, char **argv)
   prognam = argv[0];
   while (--argc > 0 && (*++argv)[0] == '-')
   {
-    for (c = argv[0] + 1, skip = FALSE; (*c != '\0') && (!(skip)); c++)
+    for (c = argv[0] + 1, skip = false; (*c != '\0') && (!(skip)); c++)
       switch (*c)
       {
       case 'm':		/* set moon output */
@@ -47,14 +47,14 @@ int main(int argc, char **argv)
 	break;
       case 's':		/* set random seed */
 	args.random_seed = strtoul(&(*++c), NULL, 0);
-	skip = TRUE;
+	skip = true;
 	break;
       case 'v':		/* increment verbosity */
 	args.verbose = true;
 	break;
       case 'n':
 	nstars = strtoul(&(*++c), NULL, 0);
-	skip = TRUE;
+	skip = true;
 	break;
       default:
       case '?':

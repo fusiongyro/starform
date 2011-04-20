@@ -1,6 +1,7 @@
 #ifndef _DATA_H
 #define _DATA_H
 
+#include <stdbool.h>
 #include "const.h"
 
 extern double      star_mass_r;

@@ -1,4 +1,5 @@
 
+#include <stdbool.h>
 #include        <stdio.h>
 #include	<math.h>
 #include	"const.h"
@@ -203,9 +204,9 @@ day_length(double mass, double radius, double eccentricity, double density, doub
   double      day_in_hours;
   double      rel_mass;
   double      pow_ratio;
-  int         stopped = FALSE;
+  int         stopped = false;
 
-  resonance = FALSE;
+  resonance = false;
   if (giant)
     k2 = 0.24;
   else
@@ -230,7 +231,7 @@ day_length(double mass, double radius, double eccentricity, double density, doub
   if (ang_velocity <= 0.0)
   {
     day_in_hours = -1;
-    stopped = TRUE;
+    stopped = true;
   }
   else
     day_in_hours = RADIANS_PER_ROTATION / (SECONDS_PER_HOUR * ang_velocity);
@@ -239,7 +240,7 @@ day_length(double mass, double radius, double eccentricity, double density, doub
     if (eccentricity > 0.1)
     {
       spin_resonance_factor = (1.0 - eccentricity) / (1.0 + eccentricity);
-      resonance = TRUE;
+      resonance = true;
       return (spin_resonance_factor * year_in_hours);
     }
     else
@@ -350,9 +351,9 @@ int
 grnhouse(int zone, double orb_radius, double r_greenhouse)
 {
   if (orb_radius < r_greenhouse && zone == 1)
-    return (TRUE);
+    return (true);
   else
-    return (FALSE);
+    return (false);
 }
 
 /*--------------------------------------------------------------------------*/

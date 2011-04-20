@@ -8,8 +8,6 @@
 
 #define PI                      (3.1415926536)
 #define RADIANS_PER_ROTATION    (2.0 * PI)
-#define TRUE                    (1)
-#define FALSE                   (0)
 #define ECCENTRICITY_COEFF      (0.077)         /* Dole's was 0.077         */
 #define PROTOPLANET_MASS        (1.0E-15)       /* Units of solar masses    */
 #define CHANGE_IN_EARTH_ANG_VEL (-1.3E-15)      /* Units of radians/sec/year */

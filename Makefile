@@ -1,7 +1,7 @@
 all:	starform
 
 # User-tunables: the flags
-CFLAGS := -g -O -DLONG_RAND -Wall -DMOON
+CFLAGS := -std=c99 -DLONG_RAND -Wall -DMOON
 LDFLAGS := -lm -lcompat
 
 # Our sources. If you add one, add it here.
