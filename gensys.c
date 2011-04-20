@@ -21,22 +21,22 @@
 #include "steltype.h"
 #include "data.h"
 
-void 
-init(void)
+void init(void)
 {
   struct timeb grap;
   long         seed;
 
   if (args.random_seed)
-  {
     seed = args.random_seed;
-  }
+
   else
   {
     ftime(&grap);
     seed = (long)grap.time * 1000 + grap.millitm;
   }
-  (void)srand(seed);
+
+  srand(seed);
+  
   if (args.display_lisp)
     printf("(Accrete (version %s) (seed 0x%.8lx))\n", "3.0", seed);
   else
