@@ -11,13 +11,13 @@ typedef struct planets_record
   double      a;		/* semi-major axis of the orbit (in AU) */
   double      e;		/* eccentricity of the orbit         */
   double      mass;		/* mass (in solar masses)            */
-  int         gas_giant;	/* TRUE if the planet is a gas giant */
+  bool        gas_giant;	/* true if the planet is a gas giant */
   int         orbit_zone;	/* the 'zone' of the planet          */
   double      radius;		/* equatorial radius (in km)         */
   double      density;		/* density (in g/cc)                 */
   double      orb_period;	/* length of the local year (days)   */
   double      day;		/* length of the local day (hours)   */
-  int         resonant_period;	/* TRUE if in resonant rotation   */
+  bool        resonant_period;	/* true if in resonant rotation      */
   int         axial_tilt;	/* units of degrees                  */
   double      esc_velocity;	/* units of cm/sec                   */
   double      surf_accel;	/* units of cm/sec2                  */

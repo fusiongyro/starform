@@ -2,7 +2,7 @@ all:	starform
 
 # User-tunables: the flags
 CFLAGS := -std=c99 -DLONG_RAND -Wall -DMOON
-LDFLAGS := -lm -lcompat
+LDFLAGS := -lm
 
 # Our sources. If you add one, add it here.
 SOURCES := accrete.c data.c display.c enviro.c gensys.c propert.c starform.c \
