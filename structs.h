@@ -46,4 +46,19 @@ typedef struct dust_record
 }
 dust;
 
+typedef struct
+{
+  /* A few variables global to the entire program:                */
+  planet_pointer planet_head;
+  
+  /* Now for some variables global to the accretion process:      */
+  int         dust_left;
+  double      r_inner;
+  double      r_outer;
+  double      reduced_mass;
+  double      dust_density;
+  double      cloud_eccen;
+  dust_pointer dust_head;  
+} accretion;
+
 #endif
