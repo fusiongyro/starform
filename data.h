@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include "const.h"
 
+// I hate this with a passion -DKL
+
 extern double      star_mass_r;
 extern double      star_lum_r;
 extern double      star_radius_r;

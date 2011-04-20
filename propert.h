@@ -18,14 +18,11 @@ struct PropertyS
 
 extern Property property[];
 
-int  propMakeVector(char *str, Property ** vec, int max);
-char *propSortByWeight(char *list);
+char *propFindLiquidAtTemp(char *out, double temp);
 char *propSortByMelt(char *list);
-char *propSortByBoil(char *list);
+int  propMakeVector(char *str, Property ** vec, int max);
+char *propFindGasAtTemp(char *out, double temp);
 char *propSortByAbundance(char *list);
 char *propSortReverse(char *list);
-char *propFindGasAtTemp(char *out, double temp);
-char *propFindLiquidAtTemp(char *out, double temp);
-char *propFindSolidAtTemp(char *out, double temp);
 
 #endif

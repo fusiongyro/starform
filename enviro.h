@@ -1,3 +1,4 @@
+
 double luminosity(double mass_ratio);
 int  orb_zone(double orb_radius);
 double volume_radius(double mass, double density);
@@ -16,12 +17,5 @@ int  grnhouse(int zone, double orb_radius, double r_greenhouse);
 double vol_inventory(double mass, double escape_vel, double rms_vel, double stellar_mass, int zone, int greenhouse_effect);
 double pressure(double volatile_gas_inventory, double equat_radius, double gravity);
 double boiling_point(double surf_pressure);
-double hydro_fraction(double volatile_gas_inventory, double planet_radius);
-double cloud_fraction(double surf_temp, double smallest_MW_retained, double equat_radius, double hydro_fraction);
-double ice_fraction(double hydro_fraction, double surf_temp);
-double eff_temp(double ecosphere_radius, double orb_radius, double albedo);
-double green_rise(double optical_depth, double effective_temp, double surf_pressure);
-double planet_albedo(double water_fraction, double cloud_fraction, double ice_fraction, double surf_pressure);
-double opacity(double molecular_weight, double surf_pressure);
 void iterate_surface_temp(planet_pointer * planet);
 void iterate_surface_temp_moon(planet_pointer * primary, planet_pointer * planet);

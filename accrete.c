@@ -375,6 +375,7 @@ void coalesce_planetesimals(accretion *accretion, double a, double e, double mas
   }
 }
 
+// this appears to be the entry point into the entire module - DKL
 planet_pointer dist_planetary_masses(double star_mass_r, double star_lum_r, double inner_dust, double outer_dust)
 {
   double      a,
