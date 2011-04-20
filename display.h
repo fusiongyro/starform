@@ -1,7 +1,7 @@
 #include "structs.h"
 #include "data.h"
 
-void verbose_print(char* message);
+void verbose_print(const char* message);
 
 // there's an implicit dependency between this and the arguments
 // struct. -DKL

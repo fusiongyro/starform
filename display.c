@@ -22,6 +22,8 @@
 static char OP[] = "(";
 static char CP[] = ")";
 
+extern flags args;
+
 typedef struct Temp_s Temp;
 struct Temp_s
 {
@@ -31,7 +33,7 @@ struct Temp_s
   double min;
 };
 
-void verbose_print(char* message)
+void verbose_print(const char* message)
 {
   if (args.verbose)
   {

@@ -18,7 +18,7 @@ accretion* make_accretion(double inner_limit_of_dust, double outer_limit_of_dust
 {
   accretion* result = malloc(sizeof(accretion));
 
-  result->dust_head = (dust *) calloc(1, sizeof(dust));
+  result->dust_head = malloc(sizeof(dust));
   result->planet_head = NULL;
   result->dust_head->next_band = NULL;
   result->dust_head->outer_edge = outer_limit_of_dust;
@@ -31,10 +31,10 @@ accretion* make_accretion(double inner_limit_of_dust, double outer_limit_of_dust
   return result;
 }
 
-void free_accretion(accretion* accretion)
+void free_accretion(accretion* accreting)
 {
   // should probably free the dust lanes etc. here as well.
-  free(accretion);
+  free(accreting);
 }
 
 double stellar_dust_limit(double star_mass_r)
@@ -52,22 +52,22 @@ double farthest_planet(double star_mass_r)
   return (50.0 * pow(star_mass_r, (1.0 / 3.0)));
 }
 
-double inner_effect_limit(accretion* accretion, double a, double e, double mass)
+double inner_effect_limit(accretion* accreting, double a, double e, double mass)
 {
-  return (a * (1.0 - e) * (1.0 - mass) / (1.0 + accretion->cloud_eccen));
+  return (a * (1.0 - e) * (1.0 - mass) / (1.0 + accreting->cloud_eccen));
 }
 
-double outer_effect_limit(accretion* accretion, double a, double e, double mass)
+double outer_effect_limit(accretion* accreting, double a, double e, double mass)
 {
-  return (a * (1.0 + e) * (1.0 + mass) / (1.0 - accretion->cloud_eccen));
+  return (a * (1.0 + e) * (1.0 + mass) / (1.0 - accreting->cloud_eccen));
 }
 
-int dust_available(accretion* accretion, double inside_range, double outside_range)
+int dust_available(accretion* accreting, double inside_range, double outside_range)
 {
   dust_pointer current_dust_band;
   int         dust_here;
 
-  current_dust_band = accretion->dust_head;
+  current_dust_band = accreting->dust_head;
   while (current_dust_band != NULL
          && current_dust_band->outer_edge < inside_range)
     current_dust_band = current_dust_band->next_band;
@@ -84,24 +84,24 @@ int dust_available(accretion* accretion, double inside_range, double outside_ran
   return (dust_here);
 }
 
-void update_dust_lanes(accretion *accretion, double min, double max, double mass, double crit_mass, double body_inner_bound, double body_outer_bound)
+void update_dust_lanes(accretion *accreting, double min, double max, double mass, double crit_mass, double body_inner_bound, double body_outer_bound)
 {
   int         gas;
   dust_pointer node1,
               node2,
               node3;
 
-  accretion->dust_left = false;
+  accreting->dust_left = false;
   if (mass > crit_mass)
     gas = false;
   else
     gas = true;
-  node1 = accretion->dust_head;
+  node1 = accreting->dust_head;
   while (node1 != NULL)
   {
     if (node1->inner_edge < min && node1->outer_edge > max)
     {
-      node2 = (dust *) calloc(1, sizeof(dust));
+      node2 = malloc(sizeof(dust));
       node2->inner_edge = min;
       node2->outer_edge = max;
       if (node1->gas_present == true)
@@ -109,7 +109,7 @@ void update_dust_lanes(accretion *accretion, double min, double max, double mass
       else
         node2->gas_present = false;
       node2->dust_present = false;
-      node3 = (dust *) calloc(1, sizeof(dust));
+      node3 = malloc(sizeof(dust));
       node3->inner_edge = max;
       node3->outer_edge = node1->outer_edge;
       node3->gas_present = node1->gas_present;
@@ -122,7 +122,7 @@ void update_dust_lanes(accretion *accretion, double min, double max, double mass
     }
     else if (node1->inner_edge < max && node1->outer_edge > max)
     {
-      node2 = (dust *) calloc(1, sizeof(dust));
+      node2 = malloc(sizeof(dust));
       node2->next_band = node1->next_band;
       node2->dust_present = node1->dust_present;
       node2->gas_present = node1->gas_present;
@@ -139,7 +139,7 @@ void update_dust_lanes(accretion *accretion, double min, double max, double mass
     }
     else if (node1->inner_edge < min && node1->outer_edge > min)
     {
-      node2 = (dust *) calloc(1, sizeof(dust));
+      node2 = malloc(sizeof(dust));
       node2->next_band = node1->next_band;
       node2->dust_present = false;
       if (node1->gas_present == true)
@@ -162,13 +162,13 @@ void update_dust_lanes(accretion *accretion, double min, double max, double mass
     else if (node1->outer_edge < min || node1->inner_edge > max)
       node1 = node1->next_band;
   }
-  node1 = accretion->dust_head;
+  node1 = accreting->dust_head;
   while (node1 != NULL)
   {
     if (node1->dust_present
          && node1->outer_edge >= body_inner_bound
               && node1->inner_edge <= body_outer_bound)
-      accretion->dust_left = true;
+      accreting->dust_left = true;
     node2 = node1->next_band;
     if (node2 != NULL)
     {
@@ -184,7 +184,7 @@ void update_dust_lanes(accretion *accretion, double min, double max, double mass
   }
 }
 
-double collect_dust(accretion *accretion, double last_mass, double a, double e, double crit_mass, dust_pointer dust_band)
+double collect_dust(accretion *accreting, double last_mass, double a, double e, double crit_mass, dust_pointer dust_band)
 {
   double      mass_density,
               temp1,
@@ -196,11 +196,11 @@ double collect_dust(accretion *accretion, double last_mass, double a, double e, 
               volume;
 
   temp = last_mass / (1.0 + last_mass);
-  accretion->reduced_mass = pow(temp, (1.0 / 4.0));
-  accretion->r_inner = inner_effect_limit(accretion, a, e, accretion->reduced_mass);
-  accretion->r_outer = outer_effect_limit(accretion, a, e, accretion->reduced_mass);
-  if (accretion->r_inner < 0.0)
-    accretion->r_inner = 0.0;
+  accreting->reduced_mass = pow(temp, (1.0 / 4.0));
+  accreting->r_inner = inner_effect_limit(accreting, a, e, accreting->reduced_mass);
+  accreting->r_outer = outer_effect_limit(accreting, a, e, accreting->reduced_mass);
+  if (accreting->r_inner < 0.0)
+    accreting->r_inner = 0.0;
   if (dust_band == NULL)
     return (0.0);
   else
@@ -208,31 +208,31 @@ double collect_dust(accretion *accretion, double last_mass, double a, double e, 
     if (dust_band->dust_present == false)
       temp_density = 0.0;
     else
-      temp_density = accretion->dust_density;
+      temp_density = accreting->dust_density;
     if (last_mass < crit_mass || dust_band->gas_present == false)
       mass_density = temp_density;
     else
       mass_density = K * temp_density / (1.0 + sqrt(crit_mass / last_mass)
                                          * (K - 1.0));
-    if (dust_band->outer_edge <= accretion->r_inner
-         || dust_band->inner_edge >= accretion->r_outer)
-      return (collect_dust(accretion, last_mass, a, e, crit_mass, dust_band->next_band));
+    if (dust_band->outer_edge <= accreting->r_inner
+         || dust_band->inner_edge >= accreting->r_outer)
+      return (collect_dust(accreting, last_mass, a, e, crit_mass, dust_band->next_band));
     else
     {
-      bandwidth = (accretion->r_outer - accretion->r_inner);
-      temp1 = accretion->r_outer - dust_band->outer_edge;
+      bandwidth = (accreting->r_outer - accreting->r_inner);
+      temp1 = accreting->r_outer - dust_band->outer_edge;
       if (temp1 < 0.0)
         temp1 = 0.0;
       width = bandwidth - temp1;
-      temp2 = dust_band->inner_edge - accretion->r_inner;
+      temp2 = dust_band->inner_edge - accreting->r_inner;
       if (temp2 < 0.0)
         temp2 = 0.0;
       width = width - temp2;
-      temp = 4.0 * PI * pow(a, 2.0) * accretion->reduced_mass
+      temp = 4.0 * PI * pow(a, 2.0) * accreting->reduced_mass
           * (1.0 - e * (temp1 - temp2) / bandwidth);
       volume = temp * width;
       return (volume * mass_density
-              + collect_dust(accretion, last_mass, a, e, crit_mass,
+              + collect_dust(accreting, last_mass, a, e, crit_mass,
                              dust_band->next_band));
     }
   }
@@ -255,7 +255,7 @@ double critical_limit(double orb_radius, double eccentricity, double star_lum_r)
   return (B * pow(temp, -0.75));
 }
 
-void accrete_dust(accretion *accretion, double *seed_mass, double a, double e, double crit_mass, double body_inner_bound, double body_outer_bound)
+void accrete_dust(accretion *accreting, double *seed_mass, double a, double e, double crit_mass, double body_inner_bound, double body_outer_bound)
 {
   double      new_mass,
               temp_mass;
@@ -268,15 +268,15 @@ void accrete_dust(accretion *accretion, double *seed_mass, double a, double e, d
     testfp(e);
     testfp(crit_mass);
     temp_mass = new_mass;
-    new_mass = collect_dust(accretion, new_mass, a, e, crit_mass,
-                            accretion->dust_head);
+    new_mass = collect_dust(accreting, new_mass, a, e, crit_mass,
+                            accreting->dust_head);
   }
   while (!(new_mass - temp_mass < 0.0001 * temp_mass));
   *seed_mass = *seed_mass + new_mass;
-  update_dust_lanes(accretion, accretion->r_inner, accretion->r_outer, (*seed_mass), crit_mass, body_inner_bound, body_outer_bound);
+  update_dust_lanes(accreting, accreting->r_inner, accreting->r_outer, (*seed_mass), crit_mass, body_inner_bound, body_outer_bound);
 }
 
-void coalesce_planetesimals(accretion *accretion, double a, double e, double mass, double crit_mass, double star_lum_r, double body_inner_bound, double body_outer_bound)
+void coalesce_planetesimals(accretion *accreting, double a, double e, double mass, double crit_mass, double star_lum_r, double body_inner_bound, double body_outer_bound)
 {
   planet_pointer node1 = NULL;
   planet_pointer node2 = NULL;
@@ -288,25 +288,25 @@ void coalesce_planetesimals(accretion *accretion, double a, double e, double mas
   double      a3;
 
   finished = false;
-  node1 = accretion->planet_head;
+  node1 = accreting->planet_head;
   while (node1 != NULL)
   {
     node2 = node1;
     temp = node1->a - a;
     if (temp > 0.0)
     {
-      dist1 = (a * (1.0 + e) * (1.0 + accretion->reduced_mass)) - a;
+      dist1 = (a * (1.0 + e) * (1.0 + accreting->reduced_mass)) - a;
       /* x aphelion   */
-      accretion->reduced_mass = pow((node1->mass / (1.0 + node1->mass)), (1.0 / 4.0));
+      accreting->reduced_mass = pow((node1->mass / (1.0 + node1->mass)), (1.0 / 4.0));
       dist2 = node1->a
-          - (node1->a * (1.0 - node1->e) * (1.0 - accretion->reduced_mass));
+          - (node1->a * (1.0 - node1->e) * (1.0 - accreting->reduced_mass));
     }
     else
     {
-      dist1 = a - (a * (1.0 - e) * (1.0 - accretion->reduced_mass));
+      dist1 = a - (a * (1.0 - e) * (1.0 - accreting->reduced_mass));
       /* x perihelion */
-      accretion->reduced_mass = pow(node1->mass / (1.0 + node1->mass), (1.0 / 4.0));
-      dist2 = (node1->a * (1.0 + node1->e) * (1.0 + accretion->reduced_mass))
+      accreting->reduced_mass = pow(node1->mass / (1.0 + node1->mass), (1.0 / 4.0));
+      dist2 = (node1->a * (1.0 + node1->e) * (1.0 + accreting->reduced_mass))
           - node1->a;
     }
     if (fabs(temp) <= fabs(dist1) || fabs(temp) <= fabs(dist2))
@@ -322,7 +322,7 @@ void coalesce_planetesimals(accretion *accretion, double a, double e, double mas
         temp = 0.0;
       e = sqrt(temp);
       temp = node1->mass + mass;
-      accrete_dust(accretion, &(temp), a3, e, star_lum_r,
+      accrete_dust(accreting, &(temp), a3, e, star_lum_r,
                    body_inner_bound, body_outer_bound);
       node1->a = a3;
       node1->e = e;
@@ -335,7 +335,7 @@ void coalesce_planetesimals(accretion *accretion, double a, double e, double mas
   }
   if (!finished)
   {
-    node3 = (planets *) calloc(1, sizeof(planets));
+    node3 = malloc(sizeof(planets));
     node3->a = a;
     node3->e = e;
     if (mass >= crit_mass)
@@ -343,22 +343,22 @@ void coalesce_planetesimals(accretion *accretion, double a, double e, double mas
     else
       node3->gas_giant = false;
     node3->mass = mass;
-    if (accretion->planet_head == NULL)
+    if (accreting->planet_head == NULL)
     {
-      accretion->planet_head = node3;
+      accreting->planet_head = node3;
       node3->next_planet = NULL;
     }
     else
     {
-      node1 = accretion->planet_head;
+      node1 = accreting->planet_head;
       if (a < node1->a)
       {
         node3->next_planet = node1;
-        accretion->planet_head = node3;
+        accreting->planet_head = node3;
       }
-      else if (accretion->planet_head->next_planet == NULL)
+      else if (accreting->planet_head->next_planet == NULL)
       {
-        accretion->planet_head->next_planet = node3;
+        accreting->planet_head->next_planet = node3;
         node3->next_planet = NULL;
       }
       else
@@ -385,10 +385,10 @@ planet_pointer dist_planetary_masses(double star_mass_r, double star_lum_r, doub
               planet_inner_bound,
               planet_outer_bound;
 
-  accretion* accretion = make_accretion(inner_dust, outer_dust);
+  accretion* accreting = make_accretion(inner_dust, outer_dust);
   planet_inner_bound = nearest_planet(star_mass_r);
   planet_outer_bound = farthest_planet(star_mass_r);
-  while (accretion->dust_left)
+  while (accreting->dust_left)
   {
     a = random_number(planet_inner_bound, planet_outer_bound);
     e = random_eccentricity();
@@ -400,12 +400,12 @@ planet_pointer dist_planetary_masses(double star_mass_r, double star_lum_r, doub
       else
         printf("Checking %g AU.\n", a);
     }
-    if (dust_available(accretion,
-                       inner_effect_limit(accretion, a, e, mass),
-                       outer_effect_limit(accretion, a, e, mass)))
+    if (dust_available(accreting,
+                       inner_effect_limit(accreting, a, e, mass),
+                       outer_effect_limit(accreting, a, e, mass)))
     {
       verbose_print(".. Injecting protoplanet.\n");
-      accretion->dust_density = DUST_DENSITY_COEFF * sqrt(star_mass_r)
+      accreting->dust_density = DUST_DENSITY_COEFF * sqrt(star_mass_r)
           * exp(-ALPHA * pow(a, (1.0 / N)));
 
       testfp(a);
@@ -413,12 +413,12 @@ planet_pointer dist_planetary_masses(double star_mass_r, double star_lum_r, doub
       testfp(star_lum_r);
 
       crit_mass = critical_limit(a, e, star_lum_r);
-      accrete_dust(accretion, &(mass), a, e, crit_mass,
+      accrete_dust(accreting, &(mass), a, e, crit_mass,
                    planet_inner_bound,
                    planet_outer_bound);
       if (mass != 0.0 && mass != PROTOPLANET_MASS)
       {
-        coalesce_planetesimals(accretion, a, e, mass, crit_mass,
+        coalesce_planetesimals(accreting, a, e, mass, crit_mass,
                                star_lum_r,
                                planet_inner_bound, planet_outer_bound);
       }
@@ -427,8 +427,9 @@ planet_pointer dist_planetary_masses(double star_mass_r, double star_lum_r, doub
     }
     verbose_print(".. failed.\n");
   }
-  free_accretion(accretion);
-  return accretion->planet_head;
+  planet_pointer result = accreting->planet_head;
+  free_accretion(accreting);
+  return result;
 }
 
 #ifdef  PROPER_MOON

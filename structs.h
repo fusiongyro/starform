@@ -38,31 +38,6 @@ typedef struct planets_record
 }
 planets;
 
-typedef struct dust_record
-{
-  double      inner_edge;
-  double      outer_edge;
-  int         dust_present;
-  int         gas_present;
-  dust_pointer next_band;
-}
-dust;
-
-typedef struct
-{
-  /* A few variables global to the entire program:                */
-  planet_pointer planet_head;
-  
-  /* Now for some variables global to the accretion process:      */
-  int         dust_left;
-  double      r_inner;
-  double      r_outer;
-  double      reduced_mass;
-  double      dust_density;
-  double      cloud_eccen;
-  dust_pointer dust_head;  
-} accretion;
-
 typedef struct 
 {
   bool make_moon;
@@ -71,7 +46,5 @@ typedef struct
   unsigned long random_seed;
   bool verbose;
 } flags;
-
-flags args;
 
 #endif
