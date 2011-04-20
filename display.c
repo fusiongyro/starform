@@ -31,8 +31,18 @@ struct Temp_s
   double min;
 };
 
-char *
-engineer_notation(double d, int p)
+void verbose_print(char* message)
+{
+  if (args.verbose)
+  {
+    if (args.display_lisp)
+      printf(";%s\n", message);
+    else
+      printf("%s\n", message);
+  }
+}
+
+char* engineer_notation(double d, int p)
 {
   static char mansign;
   static char expsign;
@@ -42,16 +52,21 @@ engineer_notation(double d, int p)
 
   mansign = '+';
   expsign = '+';
+
   if (p > MAX_MAN_DIGS)
     p = MAX_MAN_DIGS;
+
   if (p < 3)
     p = 3;
+
   --p;
+
   if (d < 0.0)
   {
     mansign = '-';
     d = -d;
   }
+
   if (d == 0.0)
   {
     exponent = 0;
@@ -60,6 +75,7 @@ engineer_notation(double d, int p)
   else
   {
     exponent = (int)log10(d);
+
     if (exponent == 0 && d < 1.0)	/* log10 sometimes lies */
     {
       --exponent;
@@ -70,32 +86,36 @@ engineer_notation(double d, int p)
       expsign = '-';
       --exponent;
     }
+
     mantissa = d / pow(10.0, (double)exponent);
+
     if (exponent < 0)
       exponent = -exponent;
+
     while (exponent % 3 != 0)
     {
       mantissa *= 10.0;
       p--;
+
       if (expsign == '-')
 	++exponent;
       else
 	--exponent;
     }
   }
+
   sprintf(output, "%c%*.*fe%c%*.*d", mansign, p, p, mantissa,
 	  expsign, MAX_EXP_DIGS, MAX_EXP_DIGS, exponent);
+
   return (output);
 }
 
-void 
-chart_system(planet_pointer first_planet)
+void chart_system(planet_pointer first_planet)
 {
   first_planet = first_planet;
 }
 
-double
-local_bp(double bp_at_stp, double surf_pressure)
+double local_bp(double bp_at_stp, double surf_pressure)
 {
   volatile double surface_pressure_in_bars;
   double      bp;
@@ -104,6 +124,7 @@ local_bp(double bp_at_stp, double surf_pressure)
   bp = 1.0 / (log(surface_pressure_in_bars + 0.001) / -5050.5 + 1.0 / 373);
   bp /= 373;
   bp *= bp_at_stp;
+
   return bp;
 }
 
@@ -114,16 +135,14 @@ double lim(double x)
   return x / sqrt(sqrt(1 + x*x*x*x));
 }
 
-double
-soft(double v, double max, double min)
+double soft(double v, double max, double min)
 {
   double dv = v - min;
   double dm = max - min;
   return (lim(2*dv/dm-1)+1)/2 * dm + min;
 }
 
-  Temp
-get_temp_range(planet_pointer planet)
+Temp get_temp_range(planet_pointer planet)
 {
   double pressmod = 1 / sqrt(1 + 20 * planet->surf_pressure/1000.0);
   double ppmod    = 1 / sqrt(10 + 5 * planet->surf_pressure/1000.0);
@@ -146,12 +165,13 @@ get_temp_range(planet_pointer planet)
   t.low  = soft(lo, max, min);
   t.max  = soft(sh, max, min);
   t.min  = soft(wl, max, min);
+
   return t;
 }
 
-void
-text_list_stuff(double temp, double min_weight, double pressure,
-		double orbital_radius, double escape_vel, double star_age)
+void text_list_stuff(
+  double temp, double min_weight, double pressure,
+  double orbital_radius, double escape_vel, double star_age)
 {
   Property   *stuff[200];
   double      amount[200];
@@ -163,6 +183,7 @@ text_list_stuff(double temp, double min_weight, double pressure,
   propFindLiquidAtTemp(buff, temp);
   propSortByMelt(buff);
   n = propMakeVector(buff, stuff, 200);
+
   for (i = 0; i < n; i++)
   {
     double      bp = local_bp(stuff[i]->boil, pressure);
@@ -174,6 +195,7 @@ text_list_stuff(double temp, double min_weight, double pressure,
       i--;
     }
   }
+
   if (n > 0)
   {
     printf("   liquids at surface:\n");
@@ -196,10 +218,12 @@ text_list_stuff(double temp, double min_weight, double pressure,
       }
     }
   }
+
   propFindGasAtTemp(buff, temp);
   propSortByAbundance(buff);
   propSortReverse(buff);
   n = propMakeVector(buff, stuff, 200);
+
   if (pressure > 0)
   {
     double      totamount = 0;
@@ -239,6 +263,7 @@ text_list_stuff(double temp, double min_weight, double pressure,
 	totamount += amount[i];
       }
     }
+
     if (n > 0 && pressure > 0)
     {
       printf("   gasses in atmosphere:\n");
@@ -254,14 +279,15 @@ text_list_stuff(double temp, double min_weight, double pressure,
   }
 }
 
-void
-text_describe_planet(char *start, planet_pointer node1)
+void text_describe_planet(char *start, planet_pointer node1)
 {
   start = start;
+
   if (node1->gas_giant)
     printf("*gas giant*\n");
   else
     printf("\n");
+
   if (node1->resonant_period)
   {
     if ((int)node1->day == (int)(node1->orb_period * 24.0))
@@ -269,19 +295,23 @@ text_describe_planet(char *start, planet_pointer node1)
     else
       printf("   Planet's rotation is in a resonant spin lock with primary.\n");
   }
+
   if (node1->a < 0.01)
     printf("   Distance from primary:\t%8.0f\tkm\n", node1->a * KM_PER_AU);
   else
     printf("   Distance from primary:\t%5.3f\tAU\n", node1->a);
+
   if (node1->mass * SUN_MASS_IN_EARTH_MASSES < 0.01)
     printf("   Mass:\t\t\t1/%0.4g\tEarth masses\n",
 	   1.0 / (SUN_MASS_IN_EARTH_MASSES * node1->mass));
   else
     printf("   Mass:\t\t\t%5.3f\tEarth masses\n",
 	   node1->mass * SUN_MASS_IN_EARTH_MASSES);
+
   printf("   Equatorial radius:\t\t%3.1f\tkm\n", node1->radius);
   printf("   Density:\t\t\t%5.3f\tgrams/cc\n", node1->density);
   printf("   Eccentricity of orbit:\t%5.3f\n", node1->e);
+
   if (!(node1->gas_giant))
   {
     printf("   Surface gravity:\t\t%4.2f\tEarth gees\n", node1->surf_grav);
@@ -308,6 +338,7 @@ text_describe_planet(char *start, planet_pointer node1)
 	     t.min - KELVIN_CELCIUS_DIFFERENCE);
     }
   }
+
   printf("   Escape Velocity:\t\t%4.2f\tkm/sec\n",
 	 node1->esc_velocity / CM_PER_KM);
   printf("   Molecular weight retained:\t%4.2f and above\n",
@@ -317,6 +348,7 @@ text_describe_planet(char *start, planet_pointer node1)
   printf("   Planetary albedo:\t\t%5.3f\n", node1->albedo);
   printf("   Length of year:\t\t%4.2f\tdays\n", node1->orb_period);
   printf("   Length of day:\t\t%4.2f\thours\n", node1->day);
+
   if (!(node1->gas_giant))
   {
     printf("   Boiling point of water:\t%3.1f\tdegrees Celcius\n",
@@ -335,8 +367,7 @@ text_describe_planet(char *start, planet_pointer node1)
   }
 }
 
-void 
-text_describe_system(planet_pointer first_planet)
+void text_describe_system(planet_pointer first_planet)
 {
   planet_pointer node1;
   int         counter;
@@ -397,8 +428,7 @@ text_describe_system(planet_pointer first_planet)
   }
 }
 
-void 
-lisp_describe_planet(char *opar, char *bstr, planet_pointer node1)
+void lisp_describe_planet(char *opar, char *bstr, planet_pointer node1)
 {
   printf("  %s boolean:\n", bstr);
   printf("  %sis-gas-giant %d%s\n", opar, node1->gas_giant, CP);
@@ -457,8 +487,7 @@ lisp_describe_planet(char *opar, char *bstr, planet_pointer node1)
 	 opar, engineer_notation(node1->albedo, 3), CP);
 }
 
-void 
-lisp_describe_system(planet_pointer first_planet)
+void lisp_describe_system(planet_pointer first_planet)
 {
   planet_pointer node1;
   int         counter;
@@ -508,8 +537,7 @@ lisp_describe_system(planet_pointer first_planet)
   printf("%s\n", CP);
 }
 
-void 
-display_system(planet_pointer first_planet)
+void display_system(planet_pointer first_planet)
 {
   if (args.display_graphics)
     chart_system(first_planet);

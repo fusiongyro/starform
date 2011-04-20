@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <math.h>
 
+#include "display.h"
 #include "accrete.h"
 
 #define testfp(x)
@@ -310,13 +311,8 @@ void coalesce_planetesimals(accretion *accretion, double a, double e, double mas
     }
     if (fabs(temp) <= fabs(dist1) || fabs(temp) <= fabs(dist2))
     {
-      if (args.verbose)
-      {
-        if (args.display_lisp)
-          printf(";Collision between two planetesimals!\n");
-        else
-          printf("Collision between two planetesimals!\n");
-      }
+      verbose_print("Collision between two planetesimals!\n");
+
       a3 = (node1->mass + mass) / ((node1->mass / node1->a) + (mass / a));
       temp = node1->mass * sqrt(node1->a) * sqrt(1.0 - pow(node1->e, 2.0));
       temp = temp + (mass * sqrt(a) * sqrt(sqrt(1.0 - pow(e, 2.0))));
@@ -407,13 +403,7 @@ planet_pointer dist_planetary_masses(double star_mass_r, double star_lum_r, doub
                        inner_effect_limit(accretion, a, e, mass),
                        outer_effect_limit(accretion, a, e, mass)))
     {
-      if (args.verbose)
-      {
-        if (args.display_lisp)
-          printf(";.. Injecting protoplanet.\n");
-        else
-          printf(".. Injecting protoplanet.\n");
-      }
+      verbose_print(".. Injecting protoplanet.\n");
       accretion->dust_density = DUST_DENSITY_COEFF * sqrt(star_mass_r)
           * exp(-ALPHA * pow(a, (1.0 / N)));
 
@@ -431,21 +421,10 @@ planet_pointer dist_planetary_masses(double star_mass_r, double star_lum_r, doub
                                star_lum_r,
                                planet_inner_bound, planet_outer_bound);
       }
-      else if (args.verbose)
-      {
-        if (args.display_lisp)
-          printf(";.. failed due to large neighbor.\n");
-        else
-          printf(".. failed due to large neighbor.\n");
-      }
-    }
-    else if (args.verbose)
-    {
-      if (args.display_lisp)
-        printf(";.. failed.\n");
       else
-        printf(".. failed.\n");
+	verbose_print(".. failed due to large neighbor.\n");
     }
+    verbose_print(".. failed.\n");
   }
   free_accretion(accretion);
   return accretion->planet_head;

@@ -1,6 +1,6 @@
 #include "structs.h"
 
-void debug_print(char* message);
+void verbose_print(char* message);
 char *engineer_notation(double d, int p);
 void chart_system(planet_pointer first_planet);
 double local_bp(double bp_at_stp, double surf_pressure);
