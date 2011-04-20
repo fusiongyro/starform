@@ -17,8 +17,8 @@ struct StellarTypeS
  
 extern StellarType StarType[];
 
-extern StellarType *starFindByMass(double mass);
-extern StellarType *starFindByTemp(double temp);
-extern const char *starFindClass(double mass, double temp);
+StellarType *starFindByMass(double mass);
+StellarType *starFindByTemp(double temp);
+const char *starFindClass(double mass, double temp);
 
 #endif
