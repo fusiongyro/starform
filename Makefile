@@ -2,7 +2,7 @@ all:	starform
 
 # User-tunables: the flags
 CFLAGS := -g -O -DLONG_RAND -Wall -DMOON
-LDFLAGS := -lm
+LDFLAGS := -lm -lcompat
 
 # Our sources. If you add one, add it here.
 SOURCES := accrete.c data.c display.c enviro.c gensys.c propert.c starform.c \
@@ -16,7 +16,7 @@ OBJECTS := ${SOURCES:.c=.o}
 include .depend
 
 starform: $(OBJECTS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 clean:
 	rm -f *.o starform

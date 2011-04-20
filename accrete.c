@@ -30,6 +30,12 @@ accretion* make_accretion(double inner_limit_of_dust, double outer_limit_of_dust
   return result;
 }
 
+void free_accretion(accretion* accretion)
+{
+  // should probably free the dust lanes etc. here as well.
+  free(accretion);
+}
+
 double stellar_dust_limit(double star_mass_r)
 {
   return (200.0 * pow(star_mass_r, (1.0 / 3.0)));
@@ -441,6 +447,7 @@ planet_pointer dist_planetary_masses(double star_mass_r, double star_lum_r, doub
         printf(".. failed.\n");
     }
   }
+  free_accretion(accretion);
   return accretion->planet_head;
 }
 
