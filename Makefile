@@ -11,7 +11,7 @@ SOURCES := accrete.c data.c display.c enviro.c gensys.c propert.c starform.c \
 OBJECTS := ${SOURCES:.c=.o}
 
 .depend: $(wildcard *.c *.h)
-	gcc -MM -E *.c *.h > $@
+	$(CC) -MM -E *.c *.h > $@
 
 include .depend
 
