@@ -4,41 +4,40 @@
 
 #include "propert.h"
 
-static int
-cmpWeight(const void *ap, const void *bp)
+static int cmpWeight(const void *ap, const void *bp)
 {
   const Property *a = *(Property **) ap;
   const Property *b = *(Property **) bp;
 
   if (a->weight > b->weight)
     return +1;
+
   return (a->weight < b->weight ? -1 : 0);
 }
 
-static int
-cmpMelt(const void *ap, const void *bp)
+static int cmpMelt(const void *ap, const void *bp)
 {
   const Property *a = *(Property **) ap;
   const Property *b = *(Property **) bp;
 
   if (a->melt > b->melt)
     return +1;
+
   return (a->melt < b->melt ? -1 : 0);
 }
 
-static int
-cmpBoil(const void *ap, const void *bp)
+static int cmpBoil(const void *ap, const void *bp)
 {
   const Property *a = *(Property **) ap;
   const Property *b = *(Property **) bp;
 
   if (a->boil > b->boil)
     return +1;
+
   return (a->boil < b->boil ? -1 : 0);
 }
 
-static int
-cmpAbundS(const void *ap, const void *bp)
+static int cmpAbundS(const void *ap, const void *bp)
 {
   const Property *a = *(Property **) ap;
   const Property *b = *(Property **) bp;
@@ -47,22 +46,22 @@ cmpAbundS(const void *ap, const void *bp)
 
   if (aa > bb)
     return +1;
+
   return (aa < bb ? -1 : 0);
 }
 
-static Property *
-findSymbol(const char *sym)
+static Property* findSymbol(const char *sym)
 {
   Property   *p;
 
   for (p = property; p->num; p++)
     if (strcmp(sym, p->symbol) == 0)
       return p;
+
   return NULL;
 }
 
-int
-propMakeVector(char *str, Property ** vec, int max)
+int propMakeVector(char *str, Property ** vec, int max)
 {
   char       *list = (char*)malloc(strlen(str) + 1);
   char       *p;
@@ -70,21 +69,25 @@ propMakeVector(char *str, Property ** vec, int max)
 
   if (!list)
     return -1;
+
   if (!vec)
     return 0;
+
   strcpy(list, str);
+
   for (p = strtok(list, " "); num < max && p; p = strtok(NULL, " "))
   {
     vec[num] = findSymbol(p);
+
     if (vec[num])
       num++;
   }
+
   free(list);
   return num;
 }
 
-static char *
-propSort(char *list, int fn(const void *, const void *))
+static char* propSort(char *list, int fn(const void *, const void *))
 {
   Property  **vec = (Property**)malloc(strlen(list) * sizeof(Property *));
   int         num = propMakeVector(list, vec, strlen(list));
@@ -95,26 +98,28 @@ propSort(char *list, int fn(const void *, const void *))
 
     strcpy(list, "");
     qsort(vec, num, sizeof(*vec), fn);
+
     for (i = 0; i < num; i++)
     {
       if (i)
 	strcat(list, " ");
+
       strcat(list, vec[i]->symbol);
     }
   }
+
   free(vec);
   return list;
 }
 
-char       *
-propSortReverse(char *list)
+char* propSortReverse(char *list)
 {
-  Property  **vec = (Property**)malloc(strlen(list) * sizeof(Property *));
-  int         num = propMakeVector(list, vec, strlen(list));
+  Property **vec = (Property**)malloc(strlen(list) * sizeof(Property *));
+  int        num = propMakeVector(list, vec, strlen(list));
 
   if (num)
   {
-    int         i;
+    int i;
 
     strcpy(list, "");
     for (i = num - 1; i >= 0; i--)
@@ -128,34 +133,29 @@ propSortReverse(char *list)
   return list;
 }
 
-char       *
-propSortByWeight(char *list)
+char* propSortByWeight(char *list)
 {
   return propSort(list, cmpWeight);
 }
 
-char       *
-propSortByMelt(char *list)
+char* propSortByMelt(char *list)
 {
   return propSort(list, cmpMelt);
 }
 
-char       *
-propSortByBoil(char *list)
+char* propSortByBoil(char *list)
 {
   return propSort(list, cmpBoil);
 }
 
-char       *
-propSortByAbundance(char *list)
+char* propSortByAbundance(char *list)
 {
   return propSort(list, cmpAbundS);
 }
 
-char       *
-propFindGasAtTemp(char *out, double temp)
+char* propFindGasAtTemp(char *out, double temp)
 {
-  Property   *p = property;
+  Property* p = property;
 
   strcpy(out, "");
   for (; p->num > 0; p++)
@@ -170,10 +170,9 @@ propFindGasAtTemp(char *out, double temp)
   return out;
 }
 
-char       *
-propFindLiquidAtTemp(char *out, double temp)
+char* propFindLiquidAtTemp(char *out, double temp)
 {
-  Property   *p = property;
+  Property* p = property;
 
   strcpy(out, "");
   for (; p->num > 0; p++)
@@ -191,10 +190,9 @@ propFindLiquidAtTemp(char *out, double temp)
   return out;
 }
 
-char       *
-propFindSolidAtTemp(char *out, double temp)
+char* propFindSolidAtTemp(char *out, double temp)
 {
-  Property   *p = property;
+  Property* p = property;
 
   strcpy(out, "");
   for (; p->num > 0; p++)
@@ -209,34 +207,7 @@ propFindSolidAtTemp(char *out, double temp)
   return out;
 }
 
-#ifdef TEST
-
-#include <stdio.h>
-
-int
-main(int argc, char **argv)
-{
-  int         i;
-
-  for (i = 1; i < argc; i++)
-  {
-    char        buff[8192];
-    double      temp = strtod(argv[i], 0);
-    char       *p = propFindSolidAtTemp(buff, temp);
-
-    printf("Solid  at %g: %s\n", temp, p);
-    printf("Liquid at %g: %s\n", temp, p = propFindLiquidAtTemp(buff, temp));
-    printf("melt: %s\n", propSortByMelt(p));
-    printf("boil: %s\n", propSortByBoil(p));
-    printf("Gas    at %g: %s\n", temp, p = propFindGasAtTemp(buff, temp));
-    printf("\n");
-  }
-  return 0;
-}
-
-#endif
-
-Property    property[] =
+Property property[] =
 {
 #include "elements.dat"
 /* An   sym    name             Aw  melt    boil    dens   ABUNDe ABUNDs Rea */
