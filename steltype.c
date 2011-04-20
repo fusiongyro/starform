@@ -32,8 +32,7 @@ StellarType StarType[] =
   {NULL, 0, 0, 0, 0, 0, 0, 0, 0}
 };
 
-StellarType *
-starFindByMass(double mass)
+StellarType* starFindByMass(double mass)
 {
   StellarType *p = StarType;
 
@@ -42,8 +41,7 @@ starFindByMass(double mass)
   return (p->star_class ? p : NULL);
 }
 
-StellarType *
-starFindByTemp(double temp)
+StellarType* starFindByTemp(double temp)
 {
   StellarType *p = StarType;
 
@@ -52,8 +50,7 @@ starFindByTemp(double temp)
   return (p->star_class ? p : NULL);
 }
 
-const char *
-starFindClass(double mass, double temp)
+const char* starFindClass(double mass, double temp)
 {
   static char star_class[16];
   double      dm;
@@ -75,22 +72,3 @@ starFindClass(double mass, double temp)
   sprintf(star_class, "%c%d", p->star_class[0], sub);
   return star_class;
 }
-
-#ifdef TEST
-
-int
-main(int argc, char **argv)
-{
-  int         i;
-
-  for (i = 1; i < argc; i++)
-  {
-    const char *star_class = starFindClass(atof(argv[i]), 0);
-
-    printf("Mass %-8g  star_class %s\n", 
-	   atof(argv[i]), star_class ? star_class : "brown dwarf");
-  }
-  return 0;
-}
-
-#endif
