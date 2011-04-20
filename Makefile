@@ -1,7 +1,7 @@
 # Makefile for "starform", a star system and planet generator
 
 # Change the following if your C compiler isn't called 'cc' (note that on Linux the default compiler is gcc but it can still be run as cc).
-CC=g++
+#CC=g++
 
 # For those machines in which the rand() function returns a long int, and for
 # some reason RAND_MAX isn't defined in the standard headers, put a LONG_RAND

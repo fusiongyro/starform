@@ -101,14 +101,14 @@ dust_available(double inside_range, double outside_range)
 
   current_dust_band = dust_head;
   while (current_dust_band != NULL
-	 && current_dust_band->outer_edge < inside_range)
+         && current_dust_band->outer_edge < inside_range)
     current_dust_band = current_dust_band->next_band;
   if (current_dust_band == NULL)
     dust_here = FALSE;
   else
     dust_here = current_dust_band->dust_present;
   while (current_dust_band != NULL
-	 && current_dust_band->inner_edge < outside_range)
+         && current_dust_band->inner_edge < outside_range)
   {
     dust_here = dust_here || current_dust_band->dust_present;
     current_dust_band = current_dust_band->next_band;
@@ -138,9 +138,9 @@ update_dust_lanes(double min, double max, double mass, double crit_mass, double 
       node2->inner_edge = min;
       node2->outer_edge = max;
       if (node1->gas_present == TRUE)
-	node2->gas_present = gas;
+        node2->gas_present = gas;
       else
-	node2->gas_present = FALSE;
+        node2->gas_present = FALSE;
       node2->dust_present = FALSE;
       node3 = (dust *) calloc(1, sizeof(dust));
       node3->inner_edge = max;
@@ -164,9 +164,9 @@ update_dust_lanes(double min, double max, double mass, double crit_mass, double 
       node1->next_band = node2;
       node1->outer_edge = max;
       if (node1->gas_present == TRUE)
-	node1->gas_present = gas;
+        node1->gas_present = gas;
       else
-	node1->gas_present = FALSE;
+        node1->gas_present = FALSE;
       node1->dust_present = FALSE;
       node1 = node2->next_band;
     }
@@ -176,9 +176,9 @@ update_dust_lanes(double min, double max, double mass, double crit_mass, double 
       node2->next_band = node1->next_band;
       node2->dust_present = FALSE;
       if (node1->gas_present == TRUE)
-	node2->gas_present = gas;
+        node2->gas_present = gas;
       else
-	node2->gas_present = FALSE;
+        node2->gas_present = FALSE;
       node2->outer_edge = node1->outer_edge;
       node2->inner_edge = min;
       node1->next_band = node2;
@@ -188,7 +188,7 @@ update_dust_lanes(double min, double max, double mass, double crit_mass, double 
     else if (node1->inner_edge >= min && node1->outer_edge <= max)
     {
       if (node1->gas_present == TRUE)
-	node1->gas_present = gas;
+        node1->gas_present = gas;
       node1->dust_present = FALSE;
       node1 = node1->next_band;
     }
@@ -199,18 +199,18 @@ update_dust_lanes(double min, double max, double mass, double crit_mass, double 
   while (node1 != NULL)
   {
     if (node1->dust_present
-	 && node1->outer_edge >= body_inner_bound
-	      && node1->inner_edge <= body_outer_bound)
+         && node1->outer_edge >= body_inner_bound
+              && node1->inner_edge <= body_outer_bound)
       dust_left = TRUE;
     node2 = node1->next_band;
     if (node2 != NULL)
     {
       if (node1->dust_present == node2->dust_present
-	   && node1->gas_present == node2->gas_present)
+           && node1->gas_present == node2->gas_present)
       {
-	node1->outer_edge = node2->outer_edge;
-	node1->next_band = node2->next_band;
-	free(node2);
+        node1->outer_edge = node2->outer_edge;
+        node1->next_band = node2->next_band;
+        free(node2);
       }
     }
     node1 = node1->next_band;
@@ -247,27 +247,27 @@ collect_dust(double last_mass, double a, double e, double crit_mass, dust_pointe
       mass_density = temp_density;
     else
       mass_density = K * temp_density / (1.0 + sqrt(crit_mass / last_mass)
-					 * (K - 1.0));
+                                         * (K - 1.0));
     if (dust_band->outer_edge <= r_inner
-	 || dust_band->inner_edge >= r_outer)
+         || dust_band->inner_edge >= r_outer)
       return (collect_dust(last_mass, a, e, crit_mass, dust_band->next_band));
     else
     {
       bandwidth = (r_outer - r_inner);
       temp1 = r_outer - dust_band->outer_edge;
       if (temp1 < 0.0)
-	temp1 = 0.0;
+        temp1 = 0.0;
       width = bandwidth - temp1;
       temp2 = dust_band->inner_edge - r_inner;
       if (temp2 < 0.0)
-	temp2 = 0.0;
+        temp2 = 0.0;
       width = width - temp2;
       temp = 4.0 * PI * pow(a, 2.0) * reduced_mass
-	  * (1.0 - e * (temp1 - temp2) / bandwidth);
+          * (1.0 - e * (temp1 - temp2) / bandwidth);
       volume = temp * width;
       return (volume * mass_density
-	      + collect_dust(last_mass, a, e, crit_mass,
-			     dust_band->next_band));
+              + collect_dust(last_mass, a, e, crit_mass,
+                             dust_band->next_band));
     }
   }
 }
@@ -305,7 +305,7 @@ accrete_dust(double *seed_mass, double a, double e, double crit_mass, double bod
     testfp(crit_mass);
     temp_mass = new_mass;
     new_mass = collect_dust(new_mass, a, e, crit_mass,
-			    dust_head);
+                            dust_head);
   }
   while (!(new_mass - temp_mass < 0.0001 * temp_mass));
   *seed_mass = *seed_mass + new_mass;
@@ -336,7 +336,7 @@ coalesce_planetesimals(double a, double e, double mass, double crit_mass, double
       /* x aphelion   */
       reduced_mass = pow((node1->mass / (1.0 + node1->mass)), (1.0 / 4.0));
       dist2 = node1->a
-	  - (node1->a * (1.0 - node1->e) * (1.0 - reduced_mass));
+          - (node1->a * (1.0 - node1->e) * (1.0 - reduced_mass));
     }
     else
     {
@@ -344,26 +344,28 @@ coalesce_planetesimals(double a, double e, double mass, double crit_mass, double
       /* x perihelion */
       reduced_mass = pow(node1->mass / (1.0 + node1->mass), (1.0 / 4.0));
       dist2 = (node1->a * (1.0 + node1->e) * (1.0 + reduced_mass))
-	  - node1->a;
+          - node1->a;
     }
     if (fabs(temp) <= fabs(dist1) || fabs(temp) <= fabs(dist2))
     {
       if (sf_f_verbose)
-	if (sf_f_lisp)
-	  printf(";Collision between two planetesimals!\n");
-	else
-	  printf("Collision between two planetesimals!\n");
+      {
+        if (sf_f_lisp)
+          printf(";Collision between two planetesimals!\n");
+        else
+          printf("Collision between two planetesimals!\n");
+      }
       a3 = (node1->mass + mass) / ((node1->mass / node1->a) + (mass / a));
       temp = node1->mass * sqrt(node1->a) * sqrt(1.0 - pow(node1->e, 2.0));
       temp = temp + (mass * sqrt(a) * sqrt(sqrt(1.0 - pow(e, 2.0))));
       temp = temp / ((node1->mass + mass) * sqrt(a3));
       temp = 1.0 - pow(temp, 2.0);
       if (temp < 0.0 || temp >= 1.0)
-	temp = 0.0;
+        temp = 0.0;
       e = sqrt(temp);
       temp = node1->mass + mass;
       accrete_dust(&(temp), a3, e, star_lum_r,
-		   body_inner_bound, body_outer_bound);
+                   body_inner_bound, body_outer_bound);
       node1->a = a3;
       node1->e = e;
       node1->mass = temp;
@@ -393,23 +395,23 @@ coalesce_planetesimals(double a, double e, double mass, double crit_mass, double
       node1 = planet_head;
       if (a < node1->a)
       {
-	node3->next_planet = node1;
-	planet_head = node3;
+        node3->next_planet = node1;
+        planet_head = node3;
       }
       else if (planet_head->next_planet == NULL)
       {
-	planet_head->next_planet = node3;
-	node3->next_planet = NULL;
+        planet_head->next_planet = node3;
+        node3->next_planet = NULL;
       }
       else
       {
-	while (node1 != NULL && node1->a < a)
-	{
-	  node2 = node1;
-	  node1 = node1->next_planet;
-	}
-	node3->next_planet = node1;
-	node2->next_planet = node3;
+        while (node1 != NULL && node1->a < a)
+        {
+          node2 = node1;
+          node1 = node1->next_planet;
+        }
+        node3->next_planet = node1;
+        node2->next_planet = node3;
       }
     }
   }
@@ -434,20 +436,24 @@ dist_planetary_masses(double star_mass_r, double star_lum_r, double inner_dust, 
     e = random_eccentricity();
     mass = PROTOPLANET_MASS;
     if (sf_f_verbose)
+    {
       if (sf_f_lisp)
-	printf(";Checking %g AU.\n", a);
+        printf(";Checking %g AU.\n", a);
       else
-	printf("Checking %g AU.\n", a);
+        printf("Checking %g AU.\n", a);
+    }
     if (dust_available(inner_effect_limit(a, e, mass),
-		       outer_effect_limit(a, e, mass)))
+                       outer_effect_limit(a, e, mass)))
     {
       if (sf_f_verbose)
-	if (sf_f_lisp)
-	  printf(";.. Injecting protoplanet.\n");
-	else
-	  printf(".. Injecting protoplanet.\n");
+      {
+        if (sf_f_lisp)
+          printf(";.. Injecting protoplanet.\n");
+        else
+          printf(".. Injecting protoplanet.\n");
+      }
       dust_density = DUST_DENSITY_COEFF * sqrt(star_mass_r)
-	  * exp(-ALPHA * pow(a, (1.0 / N)));
+          * exp(-ALPHA * pow(a, (1.0 / N)));
 
       testfp(a);
       testfp(e);
@@ -455,31 +461,37 @@ dist_planetary_masses(double star_mass_r, double star_lum_r, double inner_dust, 
 
       crit_mass = critical_limit(a, e, star_lum_r);
       accrete_dust(&(mass), a, e, crit_mass,
-		   planet_inner_bound,
-		   planet_outer_bound);
+                   planet_inner_bound,
+                   planet_outer_bound);
       if (mass != 0.0 && mass != PROTOPLANET_MASS)
-	coalesce_planetesimals(a, e, mass, crit_mass,
-			       star_lum_r,
-			       planet_inner_bound, planet_outer_bound);
+      {
+        coalesce_planetesimals(a, e, mass, crit_mass,
+                               star_lum_r,
+                               planet_inner_bound, planet_outer_bound);
+      }
       else if (sf_f_verbose)
-	if (sf_f_lisp)
-	  printf(";.. failed due to large neighbor.\n");
-	else
-	  printf(".. failed due to large neighbor.\n");
+      {
+        if (sf_f_lisp)
+          printf(";.. failed due to large neighbor.\n");
+        else
+          printf(".. failed due to large neighbor.\n");
+      }
     }
     else if (sf_f_verbose)
+    {
       if (sf_f_lisp)
-	printf(";.. failed.\n");
+        printf(";.. failed.\n");
       else
-	printf(".. failed.\n");
+        printf(".. failed.\n");
+    }
   }
   return (planet_head);
 }
 
-#ifdef	PROPER_MOON
+#ifdef  PROPER_MOON
 planet_pointer 
 dist_moon_masses(planetary_mass, star_lum_r,
-		 planet_eccentricity, inner_dust, outer_dust)
+                 planet_eccentricity, inner_dust, outer_dust)
 double      planetary_mass,
             star_lum_r,
             planet_eccentricity,
@@ -504,7 +516,7 @@ do_dist_moon_masses(double planetary_mass, double plan_radius)
               last;
   volatile double pmass = planetary_mass * SUN_MASS_IN_EARTH_MASSES;
   volatile double prad = plan_radius / KM_PER_AU;
-  volatile double maxdist = sqrt(pmass) / 200;	/* max. moon distance in AU */
+  volatile double maxdist = sqrt(pmass) / 200;  /* max. moon distance in AU */
   volatile double mindist = prad * random_number(2.5, 10);
   volatile double lastrad = mindist;
   int         maxcount = (int)sqrt(pmass * 10 + 5) + 1;
@@ -529,7 +541,7 @@ do_dist_moon_masses(double planetary_mass, double plan_radius)
     volatile double maxfac = sqrt((lastrad - prad) / maxdist) / 8;
     volatile double massmin = 1e17 / EARTH_MASS_IN_GRAMS;
     volatile double massmax = random_number(pmass / 1e6,
-					    pmass * maxfac);
+                                            pmass * maxfac);
     volatile double mmin = pow(massmin, 1.0 / 4);
     volatile double mmax = pow(massmax, 1.0 / 4);
     volatile double mass = pow(random_number(mmin, mmax), 4);
@@ -553,12 +565,12 @@ do_dist_moon_masses(double planetary_mass, double plan_radius)
       moon->first_moon = NULL;
       pmass -= mass * 2;
       if (last)
-	last->next_planet = moon;
+        last->next_planet = moon;
       else
-	head = moon;
+        head = moon;
       last = moon;
     }
   }
   return head;
 }
-#endif				/* MOON */
+#endif                          /* MOON */
