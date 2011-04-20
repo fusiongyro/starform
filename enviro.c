@@ -25,19 +25,18 @@ luminosity(double mass_ratio)
 /*   the orbital 'zone' of the particle.                                    */
 /*--------------------------------------------------------------------------*/
 
-int 
-orb_zone(double orb_radius)
+int orb_zone(stellar_system* system, double orb_radius)
 {
-  if (orb_radius < (4.0 * sqrt(star_lum_r)))
-    return (1);
+  if (orb_radius < (4.0 * sqrt(system->star_lum_r)))
+    return 1;
   else
   {
-    if (orb_radius >= 4.0 * sqrt(star_lum_r) && 
-	orb_radius < 15.0 * sqrt(star_lum_r))
-      return (2);
-    else
-      return (3);
+    if (orb_radius >= 4.0 * sqrt(system->star_lum_r) && 
+	orb_radius < 15.0 * sqrt(system->star_lum_r))
+      return 2;
   }
+
+  return 3;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -45,8 +44,7 @@ orb_zone(double orb_radius)
 /*   of grams/cc.  The radius returned is in units of km.                   */
 /*--------------------------------------------------------------------------*/
 
-double 
-volume_radius(double mass, double density)
+double volume_radius(double mass, double density)
 {
   double      volume;
 
@@ -130,13 +128,12 @@ kothari_radius(double mass, int giant, int zone)
 /*  is in units of AU.  The density is returned in units of grams/cc.       */
 /*--------------------------------------------------------------------------*/
 
-double 
-empirical_density(double mass, double orb_radius, int gas_giant)
+double empirical_density(stellar_system* system, double mass, double orb_radius, int gas_giant)
 {
   double      temp;
 
   temp = pow(mass * SUN_MASS_IN_EARTH_MASSES, (1.0 / 8.0));
-  temp = temp * pow1_4(r_ecosphere / orb_radius);
+  temp = temp * pow1_4(system->r_ecosphere / orb_radius);
   if (gas_giant)
     return (temp * 1.2);
   else
@@ -190,8 +187,7 @@ period(double separation, double small_mass, double large_mass)
 /*   The length of the day is returned in units of hours.                   */
 /*--------------------------------------------------------------------------*/
 
-double 
-day_length(double mass, double radius, double eccentricity, double density, double orb_radius, double orb_period, int giant, double mass_ratio)
+double day_length(stellar_system* system, double mass, double radius, double eccentricity, double density, double orb_radius, double orb_period, int giant, double mass_ratio)
 {
   double      base_angular_velocity;
   double      planetary_mass_in_grams;
@@ -206,7 +202,7 @@ day_length(double mass, double radius, double eccentricity, double density, doub
   double      pow_ratio;
   int         stopped = false;
 
-  resonance = false;
+  system->resonance = false;
   if (giant)
     k2 = 0.24;
   else
@@ -226,7 +222,7 @@ day_length(double mass, double radius, double eccentricity, double density, doub
       (rel_mass) *
       pow(mass_ratio, pow_ratio) *
       (1.0 / pow(orb_radius, 6.0));
-  ang_velocity = base_angular_velocity + (change_in_angular_velocity * star_age);
+  ang_velocity = base_angular_velocity + (change_in_angular_velocity * system->star_age);
 /* Now we change from rad/sec to hours/rotation.                            */
   if (ang_velocity <= 0.0)
   {
@@ -240,7 +236,7 @@ day_length(double mass, double radius, double eccentricity, double density, doub
     if (eccentricity > 0.1)
     {
       spin_resonance_factor = (1.0 - eccentricity) / (1.0 + eccentricity);
-      resonance = true;
+      system->resonance = true;
       return (spin_resonance_factor * year_in_hours);
     }
     else
@@ -287,13 +283,12 @@ escape_vel(double mass, double radius)
 /*  molecule or atom.  The velocity returned is in cm/sec.                  */
 /*--------------------------------------------------------------------------*/
 
-double 
-rms_vel(double molecular_weight, double orb_radius)
+double rms_vel(stellar_system* system, double molecular_weight, double orb_radius)
 {
   double      exospheric_temp;
 
   exospheric_temp = EARTH_EXOSPHERE_TEMP / pow2(orb_radius);
-  exospheric_temp *= sqrt(star_lum_r);
+  exospheric_temp *= sqrt(system->star_lum_r);
   return (sqrt((3.0 * MOLAR_GAS_CONST * exospheric_temp) / molecular_weight)
 	  * CM_PER_METER);
 }
@@ -635,8 +630,7 @@ opacity(double molecular_weight, double surf_pressure)
 /*       planet->boil_point                                                 */
 /*--------------------------------------------------------------------------*/
 
-void 
-iterate_surface_temp(planet_pointer * planet)
+void iterate_surface_temp(stellar_system* system, planet_pointer * planet)
 {
   double      surf1_temp;
   double      effective_temp;
@@ -650,7 +644,7 @@ iterate_surface_temp(planet_pointer * planet)
   int         num_iter = 0;
 
   optical_depth = opacity((*planet)->molec_weight, (*planet)->surf_pressure);
-  effective_temp = eff_temp(r_ecosphere, (*planet)->a, EARTH_ALBEDO);
+  effective_temp = eff_temp(system->r_ecosphere, (*planet)->a, EARTH_ALBEDO);
   greenhs_rise = green_rise(optical_depth, effective_temp,
 			    (*planet)->surf_pressure);
   surf1_temp = effective_temp + greenhs_rise;
@@ -670,7 +664,7 @@ iterate_surface_temp(planet_pointer * planet)
     if (num_iter++ > 1000)
       break;
     optical_depth = opacity((*planet)->molec_weight, (*planet)->surf_pressure);
-    effective_temp = eff_temp(r_ecosphere, (*planet)->a, albedo);
+    effective_temp = eff_temp(system->r_ecosphere, (*planet)->a, albedo);
     greenhs_rise = green_rise(optical_depth, effective_temp,
 			      (*planet)->surf_pressure);
     surf1_temp = effective_temp + greenhs_rise;
@@ -682,8 +676,7 @@ iterate_surface_temp(planet_pointer * planet)
   (*planet)->surf_temp = surf1_temp;
 }
 
-void 
-iterate_surface_temp_moon(planet_pointer * primary, planet_pointer * planet)
+void iterate_surface_temp_moon(stellar_system* system, planet_pointer * primary, planet_pointer * planet)
 {
   double      surf1_temp;
   double      effective_temp;
@@ -697,7 +690,7 @@ iterate_surface_temp_moon(planet_pointer * primary, planet_pointer * planet)
   int         num_iter = 0;
 
   optical_depth = opacity((*planet)->molec_weight, (*planet)->surf_pressure);
-  effective_temp = eff_temp(r_ecosphere, (*primary)->a, EARTH_ALBEDO);
+  effective_temp = eff_temp(system->r_ecosphere, (*primary)->a, EARTH_ALBEDO);
   greenhs_rise = green_rise(optical_depth, effective_temp,
 			    (*planet)->surf_pressure);
   surf1_temp = effective_temp + greenhs_rise;
@@ -717,7 +710,7 @@ iterate_surface_temp_moon(planet_pointer * primary, planet_pointer * planet)
     if (num_iter++ > 1000)
       break;
     optical_depth = opacity((*planet)->molec_weight, (*planet)->surf_pressure);
-    effective_temp = eff_temp(r_ecosphere, (*primary)->a, albedo);
+    effective_temp = eff_temp(system->r_ecosphere, (*primary)->a, albedo);
     greenhs_rise = green_rise(optical_depth, effective_temp,
 			      (*planet)->surf_pressure);
     surf1_temp = effective_temp + greenhs_rise;

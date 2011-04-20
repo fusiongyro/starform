@@ -170,6 +170,7 @@ Temp get_temp_range(planet_pointer planet)
 }
 
 void text_list_stuff(
+  stellar_system* system,
   double temp, double min_weight, double pressure,
   double orbital_radius, double escape_vel, double star_age)
 {
@@ -238,7 +239,7 @@ void text_list_stuff(
       }
       else
       {
-	double      vrms = rms_vel(stuff[i]->weight, orbital_radius);
+	double      vrms = rms_vel(system, stuff[i]->weight, orbital_radius);
 	double      pvrms = pow(1 / (1 + vrms / escape_vel), star_age / 1e9);
 	double      P = pressure / 1000;
 
@@ -279,7 +280,7 @@ void text_list_stuff(
   }
 }
 
-void text_describe_planet(char *start, planet_pointer node1)
+void text_describe_planet(stellar_system *system, char *start, planet_pointer node1)
 {
   start = start;
 
@@ -358,31 +359,31 @@ void text_describe_planet(char *start, planet_pointer node1)
     printf("   Cloud cover percentage:\t%4.2f\n",
 	   (node1->cloud_cover * 100));
     printf("   Ice cover percentage:\t%4.2f\n", (node1->ice_cover * 100));
-    text_list_stuff(node1->surf_temp - KELVIN_CELCIUS_DIFFERENCE,
+    text_list_stuff(system, node1->surf_temp - KELVIN_CELCIUS_DIFFERENCE,
 		    node1->molec_weight,
 		    node1->surf_pressure,
 		    node1->a,
 		    node1->esc_velocity,
-		    star_age);
+		    system->star_age);
   }
 }
 
-void text_describe_system(planet_pointer first_planet)
+void text_describe_system(stellar_system* system, planet_pointer first_planet)
 {
   planet_pointer node1;
   int         counter;
 
   printf("                         SYSTEM  CHARACTERISTICS\n");
-  printf("Stellar mass: %4.2f solar masses\n", star_mass_r);
-  printf("Stellar radius: %4.2f solar radii\n", star_radius_r);
-  printf("Stellar luminosity: %4.2f\n", star_lum_r);
+  printf("Stellar mass: %4.2f solar masses\n", system->star_mass_r);
+  printf("Stellar radius: %4.2f solar radii\n", system->star_radius_r);
+  printf("Stellar luminosity: %4.2f\n", system->star_lum_r);
 
-  printf("Stellar temperature: %g K\n", star_temp);
-  printf("Stellar class: %s\n", star_class);
+  printf("Stellar temperature: %g K\n", system->star_temp);
+  printf("Stellar class: %s\n", system->star_class);
 
   printf("Age: %5.3f billion years  (%5.3f billion left on main sequence)\n",
-	 (star_age / 1.0E9), (main_seq_life - star_age) / 1.0E9);
-  printf("Habitable ecosphere radius: %3.3f AU\n", r_ecosphere);
+	 (system->star_age / 1.0E9), (system->main_seq_life - system->star_age) / 1.0E9);
+  printf("Habitable ecosphere radius: %3.3f AU\n", system->r_ecosphere);
   printf("\n");
   printf("Planets present at:\n");
   for (node1 = first_planet, counter = 1;
@@ -417,12 +418,12 @@ void text_describe_system(planet_pointer first_planet)
     int         num = 0;
 
     printf("Planet %d\t", counter);
-    text_describe_planet("", node1);
+    text_describe_planet(system, "", node1);
     for (moon = node1->first_moon; moon; moon = moon->next_planet)
     {
       num++;
       printf("\n  Moon %d-%d\t", counter, num);
-      text_describe_planet("  ", moon);
+      text_describe_planet(system, "  ", moon);
     }
     printf("\n\n");
   }
@@ -487,7 +488,7 @@ void lisp_describe_planet(char *opar, char *bstr, planet_pointer node1)
 	 opar, engineer_notation(node1->albedo, 3), CP);
 }
 
-void lisp_describe_system(planet_pointer first_planet)
+void lisp_describe_system(stellar_system* system, planet_pointer first_planet)
 {
   planet_pointer node1;
   int         counter;
@@ -496,23 +497,23 @@ void lisp_describe_system(planet_pointer first_planet)
   printf(" %ssun\n", OP);
   printf("  %smass %s%s ; kg\n",
 	 OP,
-   engineer_notation(star_mass_r * SOLAR_MASS_IN_GRAMS / 1000.0, 6),
+   engineer_notation(system->star_mass_r * SOLAR_MASS_IN_GRAMS / 1000.0, 6),
 	 CP);
   printf("  %sradius %s%s ; km\n",
 	 OP,
-	 engineer_notation(star_radius_r
+	 engineer_notation(system->star_radius_r
 			   * SOLAR_RADIUS_IN_METRES / 1000.0, 6),
 	 CP);
   printf("  %stemperature %.0f%s ; K\n",
-	 OP, star_temp, CP);
+	 OP, system->star_temp, CP);
   printf("  %sluminosity %s%s ; * SOL luminosity\n",
-	 OP, engineer_notation(star_lum_r, 6), CP);
+	 OP, engineer_notation(system->star_lum_r, 6), CP);
   printf("  %slifetime %s%s ; years\n",
-	 OP, engineer_notation(main_seq_life, 6), CP);
+	 OP, engineer_notation(system->main_seq_life, 6), CP);
   printf("  %scurrent-age %s%s ; years\n",
-	 OP, engineer_notation(star_age, 6), CP);
+	 OP, engineer_notation(system->star_age, 6), CP);
   printf("  %secosphere-radius %s%s ; km\n",
-	 OP, engineer_notation(r_ecosphere * KM_PER_AU, 6), CP);
+	 OP, engineer_notation(system->r_ecosphere * KM_PER_AU, 6), CP);
   printf(" %s\n", CP);
   for (node1 = first_planet, counter = 1;
        node1 != NULL;
@@ -537,12 +538,12 @@ void lisp_describe_system(planet_pointer first_planet)
   printf("%s\n", CP);
 }
 
-void display_system(planet_pointer first_planet)
+void display_system(stellar_system* system, planet_pointer first_planet)
 {
   if (args.display_graphics)
     chart_system(first_planet);
   else if (args.display_lisp)
-    lisp_describe_system(first_planet);
+    lisp_describe_system(system, first_planet);
   else
-    text_describe_system(first_planet);
+    text_describe_system(system, first_planet);
 }

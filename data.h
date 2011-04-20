@@ -4,17 +4,18 @@
 #include <stdbool.h>
 #include "const.h"
 
-// I hate this with a passion -DKL
-
-extern double      star_mass_r;
-extern double      star_lum_r;
-extern double      star_radius_r;
-extern double      star_temp;
-extern double      main_seq_life;
-extern double      star_age;
-extern double      r_ecosphere;
-extern double      r_greenhouse;
-extern char        star_class[17];
-extern int         resonance;
+typedef struct 
+{
+  double      star_mass_r;
+  double      star_lum_r;
+  double      star_radius_r;
+  double      star_temp;
+  double      main_seq_life;
+  double      star_age;
+  double      r_ecosphere;
+  double      r_greenhouse;
+  char        star_class[17];
+  int         resonance;  
+} stellar_system;
 
 #endif

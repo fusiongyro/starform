@@ -66,9 +66,10 @@ int main(int argc, char **argv)
   init();
   while (nstars-- > 0)
   {
+    stellar_system system;
     planet_pointer first_planet;
-    first_planet = generate_stellar_system();
-    display_system(first_planet);
+    first_planet = generate_stellar_system(&system);
+    display_system(&system, first_planet);
   }
   return (0);
 }
