@@ -1,24 +1,11 @@
-
 #include <stdbool.h>
-#include <stddef.h>
-#include <stdlib.h>
 #include <stdio.h>
-#include <float.h>
-#include <math.h>
-#include <sys/types.h>
-#include <sys/timeb.h>
+#include <stdlib.h>
 
 #include "const.h"
 #include "structs.h"
-
 #include "gensys.h"
-#include "accrete.h"
-#include "enviro.h"
 #include "display.h"
-#include "utils.h"
-#include "steltype.h"
-#include "elements.h"
-#include "data.h"
 
 flags args;
 

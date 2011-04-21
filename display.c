@@ -2,13 +2,6 @@
 #include	<string.h>
 #include        <math.h>
 
-#ifdef MSDOS
-#include        <stddef.h>
-#include        <malloc.h>
-#include	<stdlib.h>
-#include        <float.h>
-#endif
-
 #include	"structs.h"
 #include	"const.h"
 
