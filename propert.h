@@ -1,8 +1,7 @@
 #ifndef _PROPERT_H
 #define _PROPERT_H
 
-typedef struct PropertyS Property;
-struct PropertyS
+typedef struct
 {
   int         num;
   char       *symbol;
@@ -14,13 +13,13 @@ struct PropertyS
   double      abunde;
   double      abunds;
   double      reactivity;
-};
+} element;
 
-extern Property property[];
+extern element elements[];
 
-char *propFindLiquidAtTemp(char *out, double temp);
+char *find_liquid_elements_at_temp(char *out, double temp);
 char *propSortByMelt(char *list);
-int  propMakeVector(char *str, Property ** vec, int max);
+int  propMakeVector(char *str, element ** vec, int max);
 char *propFindGasAtTemp(char *out, double temp);
 char *propSortByAbundance(char *list);
 char *propSortReverse(char *list);

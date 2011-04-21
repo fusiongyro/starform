@@ -65,7 +65,7 @@ planet_pointer generate_stellar_system(stellar_system* system, unsigned long ran
   system->star_temp = 5650 * sqrt(sqrt(system->star_lum_r) / system->star_radius_r);
   /* ignore fractional degrees */
   system->star_temp = floor(system->star_temp);
-  sprintf(system->star_class, "%.16s", starFindClass(system->star_mass_r, system->star_temp));
+  sprintf(system->star_class, "%.16s", find_star_class(system->star_temp));
   outer_dust_limit = stellar_dust_limit(system->star_mass_r);
   first_planet = dist_planetary_masses(system, 0.0, outer_dust_limit);
   system->main_seq_life = 1.0E10 * (system->star_mass_r / system->star_lum_r);

@@ -2,22 +2,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-typedef struct StellarTypeS StellarType;
+#include "steltype.h"
 
-struct StellarTypeS
-{
-  const char *star_class;
-  double      temp;
-  const char *balmer;
-  const char *lines;
-  double      mass;
-  double      size;
-  double      density;
-  double      lum;
-  double      star_age;
-};
-
-StellarType StarType[] =
+stellar_type STAR_TYPES[] =
 {
 /*  Type  Tsurf   Balmer     Other Lines     Mrel  Rrel  rho   Lrel   MS Age */
 /*         max    lines                                                years */
@@ -32,39 +19,39 @@ StellarType StarType[] =
   {NULL, 0, 0, 0, 0, 0, 0, 0, 0}
 };
 
-StellarType* starFindByMass(double mass)
+stellar_type* find_stellar_type_by_mass(double mass)
 {
-  StellarType *p = StarType;
+  stellar_type *p = STAR_TYPES;
 
   while (p->star_class && mass <= p->mass)
     p++;
   return p->star_class ? p : NULL;
 }
 
-StellarType* starFindByTemp(double temp)
+stellar_type* find_stellar_type_by_temp(double temp)
 {
-  StellarType *p = StarType;
+  stellar_type *p = STAR_TYPES;
 
   while (p->star_class && temp <= p->temp)
     p++;
   return p->star_class ? p : NULL;
 }
 
-const char* starFindClass(double mass, double temp)
+const char* find_star_class(double temp)
 {
   static char star_class[16];
   double      dm;
   int         sub;
-  StellarType *p = starFindByTemp(temp);
-
-  mass = mass; /* not used at present */
+  stellar_type *p = find_stellar_type_by_temp(temp);
 
   if (!p)
     return NULL;
-  if (p == StarType)
+  
+  if (p == STAR_TYPES)
     return p->star_class;
 
   --p;
+  
   /* p -> smallest star with more mass than wanted */
   dm = p->temp - p[1].temp;
   sub = (int)(10 * (p->temp - temp) / dm);
