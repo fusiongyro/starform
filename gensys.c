@@ -21,33 +21,39 @@
 #include "steltype.h"
 #include "data.h"
 
-void init(void)
+void display_banner()
 {
-  long seed;
-
-  if (args.random_seed)
-    seed = args.random_seed;
-
+  if (args.display_lisp)
+    printf("(Accrete (version %s))\n", "4.0");
   else
+    printf("Accrete - V%s\n", "4.0");
+}
+
+// seed the random number generator with this random seed, or the current time
+// if the random_seed is 0.
+void setup_seed(stellar_system* system, unsigned long random_seed)
+{
+  if (random_seed == 0)
   {
     struct timeval time;
     gettimeofday(&time, NULL);
-    seed = time.tv_sec * 1000 + time.tv_usec;
+    random_seed = time.tv_sec * 1000 + time.tv_usec;
   }
 
-  srand(seed);
+  // seed the system random number generator
+  srand(random_seed);
   
-  if (args.display_lisp)
-    printf("(Accrete (version %s) (seed 0x%.8lx))\n", "3.0", seed);
-  else
-    printf("Accrete - V%s; seed=0x%.8lx\n", "3.0", seed);
+  // preserve the random seed in our stellar system
+  system->random_seed = random_seed;
 }
 
-planet_pointer generate_stellar_system(stellar_system* system)
+planet_pointer generate_stellar_system(stellar_system* system, unsigned long random_seed)
 {
   planet_pointer first_planet;
   planet_pointer planet;
   double      outer_dust_limit;
+
+  setup_seed(system, random_seed);
 
   system->star_mass_r = random_number(0.6, 1.3);	/* was 0.6, 1.3 */
   system->star_radius_r = about(pow(system->star_mass_r, 1.0 / 3.0), 0.05);
@@ -61,9 +67,7 @@ planet_pointer generate_stellar_system(stellar_system* system)
   system->star_temp = floor(system->star_temp);
   sprintf(system->star_class, "%.16s", starFindClass(system->star_mass_r, system->star_temp));
   outer_dust_limit = stellar_dust_limit(system->star_mass_r);
-  first_planet = dist_planetary_masses(system->star_mass_r, 
-                                           system->star_lum_r, 
-                                           0.0, outer_dust_limit);
+  first_planet = dist_planetary_masses(system, 0.0, outer_dust_limit);
   system->main_seq_life = 1.0E10 * (system->star_mass_r / system->star_lum_r);
   if (system->main_seq_life > 6.0E9)
     system->star_age = random_number(1.0E9, 6.0E9);

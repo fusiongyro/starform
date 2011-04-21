@@ -376,6 +376,7 @@ void text_describe_system(stellar_system* system, planet_pointer first_planet)
   int         counter;
 
   printf("                         SYSTEM  CHARACTERISTICS\n");
+  printf("Random seed: 0x%.8lx\n", system->random_seed);
   printf("Stellar mass: %4.2f solar masses\n", system->star_mass_r);
   printf("Stellar radius: %4.2f solar radii\n", system->star_radius_r);
   printf("Stellar luminosity: %4.2f\n", system->star_lum_r);

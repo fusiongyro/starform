@@ -23,6 +23,8 @@ flags args;
 
 int main(int argc, char **argv)
 {
+  unsigned long random_seed = 0;
+  
   char       *c,
              *prognam;
   int         skip;
@@ -44,7 +46,7 @@ int main(int argc, char **argv)
         args.display_graphics = true;
         break;
       case 's':         /* set random seed */
-        args.random_seed = strtoul(&(*++c), NULL, 0);
+        random_seed = strtoul(&(*++c), NULL, 0);
         skip = true;
         break;
       case 'v':         /* increment verbosity */
@@ -61,12 +63,11 @@ int main(int argc, char **argv)
         return (1);
       }
   }
-  init();
   while (nstars-- > 0)
   {
     stellar_system system;
     planet_pointer first_planet;
-    first_planet = generate_stellar_system(&system);
+    first_planet = generate_stellar_system(&system, random_seed);
     display_system(&system, first_planet);
   }
   return (0);

@@ -38,8 +38,7 @@ typedef struct
 double stellar_dust_limit(double star_mass_r);
 
 planet_pointer dist_planetary_masses(
-  double star_mass_r, 
-  double star_lum_r, 
+  stellar_system* system,
   double inner_dust, 
   double outer_dust);
 

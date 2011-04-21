@@ -376,7 +376,7 @@ void coalesce_planetesimals(accretion *accreting, double a, double e, double mas
 }
 
 // this appears to be the entry point into the entire module - DKL
-planet_pointer dist_planetary_masses(double star_mass_r, double star_lum_r, double inner_dust, double outer_dust)
+planet_pointer dist_planetary_masses(stellar_system *system, double inner_dust, double outer_dust)
 {
   double      a,
               e,
@@ -384,6 +384,9 @@ planet_pointer dist_planetary_masses(double star_mass_r, double star_lum_r, doub
               crit_mass,
               planet_inner_bound,
               planet_outer_bound;
+
+  double star_mass_r = system->star_mass_r;
+  double star_lum_r = system->star_lum_r; 
 
   accretion* accreting = make_accretion(inner_dust, outer_dust);
   planet_inner_bound = nearest_planet(star_mass_r);

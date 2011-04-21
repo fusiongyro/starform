@@ -43,7 +43,6 @@ typedef struct
   bool make_moon;
   bool display_lisp;
   bool display_graphics;
-  unsigned long random_seed;
   bool verbose;
 } flags;
 

@@ -8,8 +8,7 @@
 #include "utils.h"
 #include "data.h"
 
-double 
-luminosity(double mass_ratio)
+double luminosity(double mass_ratio)
 {
   double      n;
 
