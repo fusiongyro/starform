@@ -43,10 +43,6 @@ int main(int argc, char **argv)
         args.display_lisp = true;
         break;
         
-      case 'g':         /* display graphically */
-        args.display_graphics = true;
-        break;
-        
       case 's':         /* set random seed */
         random_seed = strtoul(&(*++c), NULL, 0);
         skip = true;
@@ -63,7 +59,7 @@ int main(int argc, char **argv)
         
       case '?':
       default:
-        fprintf(stderr, "%s: Usage: %s [-l] [-g] [-s#] [-v] [-m] [-n#]\n",
+        fprintf(stderr, "%s: Usage: %s [-l] [-s#] [-v] [-m] [-n#]\n",
                 program, program);
         return 1;
       }
