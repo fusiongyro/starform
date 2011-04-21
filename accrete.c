@@ -391,18 +391,21 @@ planet_pointer dist_planetary_masses(stellar_system *system, double inner_dust, 
   accretion* accreting = make_accretion(inner_dust, outer_dust);
   planet_inner_bound = nearest_planet(star_mass_r);
   planet_outer_bound = farthest_planet(star_mass_r);
+  
+  // while there's still dust left...
   while (accreting->dust_left)
   {
+    // give us a random proto planet within the inner and outer bounds
     a = random_number(planet_inner_bound, planet_outer_bound);
     e = random_eccentricity();
     mass = PROTOPLANET_MASS;
-    if (args.verbose)
-    {
-      if (args.display_lisp)
-        printf(";Checking %g AU.\n", a);
-      else
-        printf("Checking %g AU.\n", a);
-    }
+    
+    // output verbose message
+    char message[23];
+    snprintf(message, 22, "Checking %g AU.\n", a);
+    verbose_print(message);
+    
+    // if we have dust inside the limits...
     if (dust_available(accreting,
                        inner_effect_limit(accreting, a, e, mass),
                        outer_effect_limit(accreting, a, e, mass)))
@@ -426,7 +429,7 @@ planet_pointer dist_planetary_masses(stellar_system *system, double inner_dust, 
                                planet_inner_bound, planet_outer_bound);
       }
       else
-	verbose_print(".. failed due to large neighbor.\n");
+	      verbose_print(".. failed due to large neighbor.\n");
     }
     verbose_print(".. failed.\n");
   }
