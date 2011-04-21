@@ -12,7 +12,7 @@
 #include	"structs.h"
 #include	"const.h"
 
-#include "propert.h"
+#include "elements.h"
 #include "enviro.h"
 #include "data.h"
 
@@ -184,8 +184,8 @@ void text_list_stuff(
 
   temp += 273.15;
   find_liquid_elements_at_temp(buff, temp);
-  propSortByMelt(buff);
-  n = propMakeVector(buff, stuff, 200);
+  sort_elements_by_melting_point(buff);
+  n = make_element_vector(buff, stuff, 200);
 
   for (i = 0; i < n; i++)
   {
@@ -222,10 +222,10 @@ void text_list_stuff(
     }
   }
 
-  propFindGasAtTemp(buff, temp);
-  propSortByAbundance(buff);
-  propSortReverse(buff);
-  n = propMakeVector(buff, stuff, 200);
+  find_gas_elements_at_temp(buff, temp);
+  sort_elements_by_abundance(buff);
+  sort_elements_reverse(buff);
+  n = make_element_vector(buff, stuff, 200);
 
   if (pressure > 0)
   {

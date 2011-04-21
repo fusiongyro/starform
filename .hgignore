@@ -3,3 +3,4 @@ syntax: glob
 *.o
 starform
 .depend
+nbproject/private

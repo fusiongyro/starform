@@ -1,5 +1,5 @@
-#ifndef _PROPERT_H
-#define _PROPERT_H
+#ifndef _ELEMENTS_H
+#define _ELEMENTS_H
 
 typedef struct
 {
@@ -18,10 +18,10 @@ typedef struct
 extern element elements[];
 
 char *find_liquid_elements_at_temp(char *out, double temp);
-char *propSortByMelt(char *list);
-int  propMakeVector(char *str, element ** vec, int max);
-char *propFindGasAtTemp(char *out, double temp);
-char *propSortByAbundance(char *list);
-char *propSortReverse(char *list);
+char *sort_elements_by_melting_point(char *list);
+int   make_element_vector(char *str, element ** vec, int max);
+char *find_gas_elements_at_temp(char *out, double temp);
+char *sort_elements_by_abundance(char *list);
+char *sort_elements_reverse(char *list);
 
 #endif
