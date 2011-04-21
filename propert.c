@@ -6,8 +6,8 @@
 
 static int cmpWeight(const void *ap, const void *bp)
 {
-  const Property *a = *(Property **) ap;
-  const Property *b = *(Property **) bp;
+  const Property *a = *(Property**) ap;
+  const Property *b = *(Property**) bp;
 
   if (a->weight > b->weight)
     return +1;
@@ -102,7 +102,7 @@ static char* propSort(char *list, int fn(const void *, const void *))
     for (i = 0; i < num; i++)
     {
       if (i)
-	strcat(list, " ");
+	      strcat(list, " ");
 
       strcat(list, vec[i]->symbol);
     }
