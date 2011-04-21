@@ -176,14 +176,14 @@ void text_list_stuff(
   double temp, double min_weight, double pressure,
   double orbital_radius, double escape_vel, double star_age)
 {
-  Property   *stuff[200];
+  element   *stuff[200];
   double      amount[200];
   char        buff[200*5];
   int         n;
   int         i;
 
   temp += 273.15;
-  propFindLiquidAtTemp(buff, temp);
+  find_liquid_elements_at_temp(buff, temp);
   propSortByMelt(buff);
   n = propMakeVector(buff, stuff, 200);
 
