@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "propert.h"
+#include "elements.h"
 
-static int cmpWeight(const void *ap, const void *bp)
+static int compare_by_weight(const void *ap, const void *bp)
 {
   const element *a = *(element**) ap;
   const element *b = *(element**) bp;
@@ -15,7 +15,7 @@ static int cmpWeight(const void *ap, const void *bp)
   return a->weight < b->weight ? -1 : 0;
 }
 
-static int cmpMelt(const void *ap, const void *bp)
+static int compare_by_melting_point(const void *ap, const void *bp)
 {
   const element *a = *(element **) ap;
   const element *b = *(element **) bp;
@@ -26,7 +26,7 @@ static int cmpMelt(const void *ap, const void *bp)
   return a->melt < b->melt ? -1 : 0;
 }
 
-static int cmpBoil(const void *ap, const void *bp)
+static int compare_by_boiling_point(const void *ap, const void *bp)
 {
   const element *a = *(element **) ap;
   const element *b = *(element **) bp;
@@ -37,7 +37,7 @@ static int cmpBoil(const void *ap, const void *bp)
   return a->boil < b->boil ? -1 : 0;
 }
 
-static int cmpAbundS(const void *ap, const void *bp)
+static int compare_by_abundance(const void *ap, const void *bp)
 {
   const element *a = *(element **) ap;
   const element *b = *(element **) bp;
@@ -50,7 +50,7 @@ static int cmpAbundS(const void *ap, const void *bp)
   return aa < bb ? -1 : 0;
 }
 
-static element* findSymbol(const char *sym)
+static element* find_symbol(const char *sym)
 {
   element   *p;
 
@@ -61,7 +61,7 @@ static element* findSymbol(const char *sym)
   return NULL;
 }
 
-int propMakeVector(char *str, element ** vec, int max)
+int make_element_vector(char *str, element ** vec, int max)
 {
   char       *list = (char*)malloc(strlen(str) + 1);
   char       *p;
@@ -77,7 +77,7 @@ int propMakeVector(char *str, element ** vec, int max)
 
   for (p = strtok(list, " "); num < max && p; p = strtok(NULL, " "))
   {
-    vec[num] = findSymbol(p);
+    vec[num] = find_symbol(p);
 
     if (vec[num])
       num++;
@@ -87,10 +87,10 @@ int propMakeVector(char *str, element ** vec, int max)
   return num;
 }
 
-static char* propSort(char *list, int fn(const void *, const void *))
+static char* sort_elements(char *list, int fn(const void *, const void *))
 {
   element  **vec = (element**)malloc(strlen(list) * sizeof(element *));
-  int         num = propMakeVector(list, vec, strlen(list));
+  int         num = make_element_vector(list, vec, strlen(list));
 
   if (num)
   {
@@ -112,10 +112,10 @@ static char* propSort(char *list, int fn(const void *, const void *))
   return list;
 }
 
-char* propSortReverse(char *list)
+char* sort_elements_reverse(char *list)
 {
   element **vec = (element**)malloc(strlen(list) * sizeof(element *));
-  int        num = propMakeVector(list, vec, strlen(list));
+  int        num = make_element_vector(list, vec, strlen(list));
 
   if (num)
   {
@@ -133,27 +133,27 @@ char* propSortReverse(char *list)
   return list;
 }
 
-char* propSortByWeight(char *list)
+char* sort_by_element_weight(char *list)
 {
-  return propSort(list, cmpWeight);
+  return sort_elements(list, compare_by_weight);
 }
 
-char* propSortByMelt(char *list)
+char* sort_elements_by_melting_point(char *list)
 {
-  return propSort(list, cmpMelt);
+  return sort_elements(list, compare_by_melting_point);
 }
 
-char* propSortByBoil(char *list)
+char* sort_elements_by_boiling_point(char *list)
 {
-  return propSort(list, cmpBoil);
+  return sort_elements(list, compare_by_boiling_point);
 }
 
-char* propSortByAbundance(char *list)
+char* sort_elements_by_abundance(char *list)
 {
-  return propSort(list, cmpAbundS);
+  return sort_elements(list, compare_by_abundance);
 }
 
-char* propFindGasAtTemp(char *out, double temp)
+char* find_gas_elements_at_temp(char *out, double temp)
 {
   element* p = elements;
 
@@ -190,7 +190,7 @@ char* find_liquid_elements_at_temp(char *out, double temp)
   return out;
 }
 
-char* propFindSolidAtTemp(char *out, double temp)
+char* find_solid_elements_at_temp(char *out, double temp)
 {
   element* p = elements;
 

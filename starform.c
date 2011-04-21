@@ -16,7 +16,7 @@
 #include "display.h"
 #include "utils.h"
 #include "steltype.h"
-#include "propert.h"
+#include "elements.h"
 #include "data.h"
 
 flags args;

@@ -6,8 +6,7 @@ CFLAGS := $(CFLAGS) -std=c99 -DLONG_RAND -Wall -Wextra #-Wundef -Wpointer-arith 
 LDFLAGS := -g -lm
 
 # Our sources. If you add one, add it here.
-SOURCES := accrete.c data.c display.c enviro.c gensys.c propert.c starform.c \
-           steltype.c utils.c
+SOURCES := $(wildcard *.c)
 
 OBJECTS := ${SOURCES:.c=.o}
 
