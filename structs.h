@@ -42,7 +42,6 @@ typedef struct
 {
   bool make_moon;
   bool display_lisp;
-  bool display_graphics;
   bool verbose;
 } flags;
 

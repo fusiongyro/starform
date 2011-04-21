@@ -112,11 +112,6 @@ char* engineer_notation(double d, int p)
   return output;
 }
 
-void chart_system(planet_pointer first_planet)
-{
-  first_planet = first_planet;
-}
-
 double local_bp(double bp_at_stp, double surf_pressure)
 {
   volatile double surface_pressure_in_bars;
@@ -543,9 +538,7 @@ void lisp_describe_system(stellar_system* system, planet_pointer first_planet)
 
 void display_system(stellar_system* system, planet_pointer first_planet)
 {
-  if (args.display_graphics)
-    chart_system(first_planet);
-  else if (args.display_lisp)
+  if (args.display_lisp)
     lisp_describe_system(system, first_planet);
   else
     text_describe_system(system, first_planet);
