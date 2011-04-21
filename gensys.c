@@ -1,25 +1,12 @@
+#include <stdio.h>
+#include <sys/time.h>
+#include <math.h>
+#include <stdlib.h>
 
-#include        <stddef.h>
-#include	<stdlib.h>
-#include	<stdio.h>
-#include        <float.h>
-#include        <math.h>
-#include        <sys/types.h>
-#include        <sys/time.h>
-
-#ifdef MSDOS
-#include        <malloc.h>
-#endif
-
-#include        "const.h"
-#include        "structs.h"
-
+#include "structs.h"
 #include "accrete.h"
 #include "enviro.h"
-#include "display.h"
-#include "utils.h"
 #include "steltype.h"
-#include "data.h"
 
 void display_banner()
 {
