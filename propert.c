@@ -12,7 +12,7 @@ static int cmpWeight(const void *ap, const void *bp)
   if (a->weight > b->weight)
     return +1;
 
-  return (a->weight < b->weight ? -1 : 0);
+  return a->weight < b->weight ? -1 : 0;
 }
 
 static int cmpMelt(const void *ap, const void *bp)
@@ -23,7 +23,7 @@ static int cmpMelt(const void *ap, const void *bp)
   if (a->melt > b->melt)
     return +1;
 
-  return (a->melt < b->melt ? -1 : 0);
+  return a->melt < b->melt ? -1 : 0;
 }
 
 static int cmpBoil(const void *ap, const void *bp)
@@ -34,7 +34,7 @@ static int cmpBoil(const void *ap, const void *bp)
   if (a->boil > b->boil)
     return +1;
 
-  return (a->boil < b->boil ? -1 : 0);
+  return a->boil < b->boil ? -1 : 0;
 }
 
 static int cmpAbundS(const void *ap, const void *bp)
@@ -47,7 +47,7 @@ static int cmpAbundS(const void *ap, const void *bp)
   if (aa > bb)
     return +1;
 
-  return (aa < bb ? -1 : 0);
+  return aa < bb ? -1 : 0;
 }
 
 static Property* findSymbol(const char *sym)

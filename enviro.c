@@ -16,7 +16,7 @@ double luminosity(double mass_ratio)
     n = 1.75 * (mass_ratio - 0.1) + 3.325;
   else
     n = 0.5 * (2.0 - mass_ratio) + 4.4;
-  return (pow(mass_ratio, n));
+  return pow(mass_ratio, n);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -49,7 +49,7 @@ double volume_radius(double mass, double density)
 
   mass = mass * SOLAR_MASS_IN_GRAMS;
   volume = mass / density;
-  return (pow((3.0 * volume) / (4.0 * PI), (1.0 / 3.0)) / CM_PER_KM);
+  return pow((3.0 * volume) / (4.0 * PI), (1.0 / 3.0)) / CM_PER_KM;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -119,7 +119,7 @@ kothari_radius(double mass, int giant, int zone)
   temp2 = 1.0 + temp2;
   temp = temp / temp2;
   temp = (temp * pow(mass, (1.0 / 3.0))) / CM_PER_KM;
-  return (temp);
+  return temp;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -134,9 +134,9 @@ double empirical_density(stellar_system* system, double mass, double orb_radius,
   temp = pow(mass * SUN_MASS_IN_EARTH_MASSES, (1.0 / 8.0));
   temp = temp * pow1_4(system->r_ecosphere / orb_radius);
   if (gas_giant)
-    return (temp * 1.2);
+    return temp * 1.2;
   else
-    return (temp * 5.5);
+    return temp * 5.5;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -152,7 +152,7 @@ volume_density(double mass, double equat_radius)
   mass = mass * SOLAR_MASS_IN_GRAMS;
   equat_radius = equat_radius * CM_PER_KM;
   volume = (4.0 * PI * pow3(equat_radius)) / 3.0;
-  return (mass / volume);
+  return mass / volume;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -166,7 +166,7 @@ period(double separation, double small_mass, double large_mass)
   double      period_in_years;
 
   period_in_years = sqrt(pow3(separation) / (small_mass + large_mass));
-  return (period_in_years * DAYS_IN_A_YEAR);
+  return period_in_years * DAYS_IN_A_YEAR;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -236,12 +236,12 @@ double day_length(stellar_system* system, double mass, double radius, double ecc
     {
       spin_resonance_factor = (1.0 - eccentricity) / (1.0 + eccentricity);
       system->resonance = true;
-      return (spin_resonance_factor * year_in_hours);
+      return spin_resonance_factor * year_in_hours;
     }
     else
-      return (year_in_hours);
+      return year_in_hours;
   }
-  return (day_in_hours);
+  return day_in_hours;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -255,7 +255,7 @@ inclination(double orb_radius)
   int         temp;
 
   temp = (int)(pow(orb_radius, 0.2) * about(EARTH_AXIAL_TILT, 0.4));
-  return (temp % 360);
+  return temp % 360;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -273,7 +273,7 @@ escape_vel(double mass, double radius)
 
   mass_in_grams = mass * SOLAR_MASS_IN_GRAMS;
   radius_in_cm = radius * CM_PER_KM;
-  return (sqrt(2.0 * GRAV_CONSTANT * mass_in_grams / radius_in_cm));
+  return sqrt(2.0 * GRAV_CONSTANT * mass_in_grams / radius_in_cm);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -332,7 +332,7 @@ acceleration(double mass, double radius)
 double 
 gravity(double acceleration)
 {
-  return (acceleration / EARTH_ACCELERATION);
+  return acceleration / EARTH_ACCELERATION;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -345,9 +345,9 @@ int
 grnhouse(int zone, double orb_radius, double r_greenhouse)
 {
   if (orb_radius < r_greenhouse && zone == 1)
-    return (true);
+    return true;
   else
-    return (false);
+    return false;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -386,12 +386,12 @@ vol_inventory(double mass, double escape_vel, double rms_vel,
     temp1 = (proportion_const * earth_units) / stellar_mass;
     temp2 = about(temp1, 0.2);
     if (greenhouse_effect)
-      return (temp2);
+      return temp2;
     else
-      return (temp2 / 100.0);
+      return temp2 / 100.0;
   }
   else
-    return (0.0);
+    return 0.0;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -404,7 +404,7 @@ double
 pressure(double volatile_gas_inventory, double equat_radius, double gravity)
 {
   equat_radius = KM_EARTH_RADIUS / equat_radius;
-  return (volatile_gas_inventory * gravity / pow2(equat_radius));
+  return volatile_gas_inventory * gravity / pow2(equat_radius);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -419,7 +419,7 @@ boiling_point(double surf_pressure)
   double      surface_pressure_in_bars;
 
   surface_pressure_in_bars = surf_pressure / MILLIBARS_PER_BAR;
-  return (1.0 / (log(surface_pressure_in_bars) / -5050.5 + 1.0 / 373.0));
+  return 1.0 / (log(surface_pressure_in_bars) / -5050.5 + 1.0 / 373.0);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -437,9 +437,9 @@ hydro_fraction(double volatile_gas_inventory, double planet_radius)
 
   temp = (0.71 * volatile_gas_inventory / 1000.0) * pow2(KM_EARTH_RADIUS / planet_radius);
   if (temp >= 1.0)
-    return (1.0);
+    return 1.0;
   else
-    return (temp);
+    return temp;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -462,7 +462,7 @@ cloud_fraction(double surf_temp, double smallest_MW_retained, double equat_radiu
               hydro_mass;
 
   if (smallest_MW_retained > WATER_VAPOR)
-    return (0.0);
+    return 0.0;
   else
   {
     surf_area = 4.0 * PI * pow2(equat_radius);
@@ -471,9 +471,9 @@ cloud_fraction(double surf_temp, double smallest_MW_retained, double equat_radiu
                         exp(Q2_36 * (surf_temp - 288.0));
     fraction = CLOUD_COVERAGE_FACTOR * water_vapor_in_kg / surf_area;
     if (fraction >= 1.0)
-      return (1.0);
+      return 1.0;
     else
-      return (fraction);
+      return fraction;
   }
 }
 
@@ -497,9 +497,9 @@ ice_fraction(double hydro_fraction, double surf_temp)
   if (temp > (1.5 * hydro_fraction))
     temp = (1.5 * hydro_fraction);
   if (temp >= 1.0)
-    return (1.0);
+    return 1.0;
   else
-    return (temp);
+    return temp;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -579,7 +579,7 @@ planet_albedo(double water_fraction, double cloud_fraction, double ice_fraction,
     ice_part = ice_fraction * about(AIRLESS_ICE_ALBEDO, 0.4);
   else
     ice_part = ice_fraction * about(ICE_ALBEDO, 0.1);
-  return (cloud_part + rock_part + water_part + ice_part);
+  return cloud_part + rock_part + water_part + ice_part;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -614,7 +614,7 @@ opacity(double molecular_weight, double surf_pressure)
     optical_depth = optical_depth * 2.0;
   else if (surf_pressure >= (5.0 * EARTH_SURF_PRES_IN_MILLIBARS))
     optical_depth = optical_depth * 1.5;
-  return (optical_depth);
+  return optical_depth;
 }
 
 /*--------------------------------------------------------------------------*/

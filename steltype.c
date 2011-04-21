@@ -38,7 +38,7 @@ StellarType* starFindByMass(double mass)
 
   while (p->star_class && mass <= p->mass)
     p++;
-  return (p->star_class ? p : NULL);
+  return p->star_class ? p : NULL;
 }
 
 StellarType* starFindByTemp(double temp)
@@ -47,7 +47,7 @@ StellarType* starFindByTemp(double temp)
 
   while (p->star_class && temp <= p->temp)
     p++;
-  return (p->star_class ? p : NULL);
+  return p->star_class ? p : NULL;
 }
 
 const char* starFindClass(double mass, double temp)

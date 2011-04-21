@@ -109,7 +109,7 @@ char* engineer_notation(double d, int p)
   sprintf(output, "%c%*.*fe%c%*.*d", mansign, p, p, mantissa,
 	  expsign, MAX_EXP_DIGS, MAX_EXP_DIGS, exponent);
 
-  return (output);
+  return output;
 }
 
 void chart_system(planet_pointer first_planet)

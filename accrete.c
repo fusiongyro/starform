@@ -39,27 +39,27 @@ void free_accretion(accretion* accreting)
 
 double stellar_dust_limit(double star_mass_r)
 {
-  return (200.0 * pow(star_mass_r, (1.0 / 3.0)));
+  return 200.0 * pow(star_mass_r, (1.0 / 3.0));
 }
 
 double nearest_planet(double star_mass_r)
 {
-  return (0.3 * pow(star_mass_r, (1.0 / 3.0)));
+  return 0.3 * pow(star_mass_r, (1.0 / 3.0));
 }
 
 double farthest_planet(double star_mass_r)
 {
-  return (50.0 * pow(star_mass_r, (1.0 / 3.0)));
+  return 50.0 * pow(star_mass_r, (1.0 / 3.0));
 }
 
 double inner_effect_limit(accretion* accreting, double a, double e, double mass)
 {
-  return (a * (1.0 - e) * (1.0 - mass) / (1.0 + accreting->cloud_eccen));
+  return a * (1.0 - e) * (1.0 - mass) / (1.0 + accreting->cloud_eccen);
 }
 
 double outer_effect_limit(accretion* accreting, double a, double e, double mass)
 {
-  return (a * (1.0 + e) * (1.0 + mass) / (1.0 - accreting->cloud_eccen));
+  return a * (1.0 + e) * (1.0 + mass) / (1.0 - accreting->cloud_eccen);
 }
 
 int dust_available(accretion* accreting, double inside_range, double outside_range)
@@ -71,17 +71,20 @@ int dust_available(accretion* accreting, double inside_range, double outside_ran
   while (current_dust_band != NULL
          && current_dust_band->outer_edge < inside_range)
     current_dust_band = current_dust_band->next_band;
+
   if (current_dust_band == NULL)
     dust_here = false;
   else
     dust_here = current_dust_band->dust_present;
+
   while (current_dust_band != NULL
          && current_dust_band->inner_edge < outside_range)
   {
     dust_here = dust_here || current_dust_band->dust_present;
     current_dust_band = current_dust_band->next_band;
   }
-  return (dust_here);
+
+  return dust_here;
 }
 
 void update_dust_lanes(accretion *accreting, double min, double max, double mass, double crit_mass, double body_inner_bound, double body_outer_bound)
@@ -202,7 +205,7 @@ double collect_dust(accretion *accreting, double last_mass, double a, double e, 
   if (accreting->r_inner < 0.0)
     accreting->r_inner = 0.0;
   if (dust_band == NULL)
-    return (0.0);
+    return 0.0;
   else
   {
     if (dust_band->dust_present == false)
@@ -216,7 +219,7 @@ double collect_dust(accretion *accreting, double last_mass, double a, double e, 
                                          * (K - 1.0));
     if (dust_band->outer_edge <= accreting->r_inner
          || dust_band->inner_edge >= accreting->r_outer)
-      return (collect_dust(accreting, last_mass, a, e, crit_mass, dust_band->next_band));
+      return collect_dust(accreting, last_mass, a, e, crit_mass, dust_band->next_band);
     else
     {
       bandwidth = (accreting->r_outer - accreting->r_inner);
@@ -231,9 +234,9 @@ double collect_dust(accretion *accreting, double last_mass, double a, double e, 
       temp = 4.0 * PI * pow(a, 2.0) * accreting->reduced_mass
           * (1.0 - e * (temp1 - temp2) / bandwidth);
       volume = temp * width;
-      return (volume * mass_density
-              + collect_dust(accreting, last_mass, a, e, crit_mass,
-                             dust_band->next_band));
+      return volume * mass_density
+             + collect_dust(accreting, last_mass, a, e, crit_mass,
+                             dust_band->next_band);
     }
   }
 }
@@ -252,7 +255,7 @@ double critical_limit(double orb_radius, double eccentricity, double star_lum_r)
 
   perihelion_dist = (orb_radius - orb_radius * eccentricity);
   temp = perihelion_dist * sqrt(star_lum_r);
-  return (B * pow(temp, -0.75));
+  return B * pow(temp, -0.75);
 }
 
 void accrete_dust(accretion *accreting, double *seed_mass, double a, double e, double crit_mass, double body_inner_bound, double body_outer_bound)
@@ -454,7 +457,7 @@ double      planetary_mass,
               planet_inner_bound,
               planet_outer_bound;
 
-  return (NULL);
+  return NULL;
 }
 #else
 planet_pointer do_dist_moon_masses(double planetary_mass, double plan_radius)

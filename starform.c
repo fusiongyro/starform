@@ -60,7 +60,7 @@ int main(int argc, char **argv)
       case '?':
         fprintf(stderr, "%s: Usage: %s [-l] [-g] [-s#] [-v] [-m]\n",
                 prognam, prognam);
-        return (1);
+        return 1;
       }
   }
   while (nstars-- > 0)
@@ -70,5 +70,5 @@ int main(int argc, char **argv)
     first_planet = generate_stellar_system(&system, random_seed);
     display_system(&system, first_planet);
   }
-  return (0);
+  return 0;
 }
