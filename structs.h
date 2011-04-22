@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-typedef struct dust_record *dust_pointer;
+typedef struct dust_record *dustp;
 typedef struct planets_record *planet_pointer;
 
 typedef struct planets_record
