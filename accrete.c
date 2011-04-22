@@ -114,29 +114,24 @@ double outer_effect_limit(accretion* accreting, double a, double e, double mass)
  */
 bool dust_available(accretion* accreting, double inside_range, double outside_range)
 {
-  dustp current_dust_band;
+  dustp current;
   bool         dust_here;
 
   // this loop finds the dust band whose outer edge is within our inside range.
-  current_dust_band = accreting->dust_head;
-  while (current_dust_band != NULL
-         && current_dust_band->outer_edge < inside_range)
-    current_dust_band = current_dust_band->next_band;
+  for (current = accreting->dust_head;
+       current != NULL && current->outer_edge < inside_range;
+       current = current->next_band);
 
-  // if we have no dust band, there's no dust here
-  if (current_dust_band == NULL)
-    dust_here = false;
-  // otherwise, it depends on the dust record
-  else
-    dust_here = current_dust_band->has_dust;
+  // if we have no dust band, there's no dust here; otherwise, it depends on the
+  // dust record
+  dust_here = current == NULL ? false : current->has_dust;
 
   // this loop ORs together all of the dust bands between the first one we found
   // and the dust band whose inner edge is outside our outside range.
-  while (current_dust_band != NULL
-         && current_dust_band->inner_edge < outside_range)
+  while (current != NULL && current->inner_edge < outside_range)
   {
-    dust_here = dust_here || current_dust_band->has_dust;
-    current_dust_band = current_dust_band->next_band;
+    dust_here = dust_here || current->has_dust;
+    current = current->next_band;
   }
 
   // return whether or not we found a dust band in our range that still had dust
