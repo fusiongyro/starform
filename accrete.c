@@ -14,39 +14,85 @@
 
 #define testfp(x)
 
+dust* make_dust(double inner_edge, double outer_edge);
+
+/**
+ * Constructor for the accretion struct type. Caller is responsible for calling
+ * free_accretion() when done.
+ * 
+ * @param inner_limit_of_dust  the inner range for dust
+ * @param outer_limit_of_dust  the outer range for dust
+ */
 accretion* make_accretion(double inner_limit_of_dust, double outer_limit_of_dust)
 {
   accretion* result = malloc(sizeof(accretion));
 
-  result->dust_head = malloc(sizeof(dust));
   result->planet_head = NULL;
-  result->dust_head->next_band = NULL;
-  result->dust_head->outer_edge = outer_limit_of_dust;
-  result->dust_head->inner_edge = inner_limit_of_dust;
-  result->dust_head->dust_present = true;
-  result->dust_head->gas_present = true;
+
+  result->dust_head = make_dust(inner_limit_of_dust, outer_limit_of_dust);
+  result->dust_head->has_dust = true;
+  result->dust_head->has_gas = true;
+  
   result->dust_left = true;
   result->cloud_eccen = 0.2;
   
   return result;
 }
 
+/**
+ * Frees the accretion process.
+ */
 void free_accretion(accretion* accreting)
 {
   // should probably free the dust lanes etc. here as well.
   free(accreting);
 }
 
+/**
+ * Constructs a new dust lane with the given range.
+ */
+dust* make_dust(double inner_edge, double outer_edge)
+{
+  dust* lane = malloc(sizeof(dust));
+  
+  lane->inner_edge   = inner_edge;
+  lane->outer_edge   = outer_edge;
+  
+  // defaults 
+  lane->has_dust     = false;
+  lane->has_gas      = false;
+  lane->next_band    = NULL;
+  
+  return lane;
+}
+
+/**
+ * Frees a dust lane.
+ */
+void free_dust(dust* dust_lane)
+{
+  free(dust_lane);
+}
+
+/**
+ * Returns the stellar dust limit for this star's mass ratio.
+ */
 double stellar_dust_limit(double star_mass_r)
 {
   return 200.0 * pow(star_mass_r, (1.0 / 3.0));
 }
 
+/**
+ * Returns the nearest a planet can be to this star, based on the mass ratio.
+ */
 double nearest_planet(double star_mass_r)
 {
   return 0.3 * pow(star_mass_r, (1.0 / 3.0));
 }
 
+/**
+ * Returns the farthest a planet can be from this star, based on the mass ratio.
+ */
 double farthest_planet(double star_mass_r)
 {
   return 50.0 * pow(star_mass_r, (1.0 / 3.0));
@@ -62,132 +108,264 @@ double outer_effect_limit(accretion* accreting, double a, double e, double mass)
   return a * (1.0 + e) * (1.0 + mass) / (1.0 - accreting->cloud_eccen);
 }
 
-int dust_available(accretion* accreting, double inside_range, double outside_range)
+/**
+ * Returns whether or not there is still dust between inside_range and 
+ * outside_range in this current accretion process.
+ */
+bool dust_available(accretion* accreting, double inside_range, double outside_range)
 {
-  dust_pointer current_dust_band;
-  int         dust_here;
+  dustp current_dust_band;
+  bool         dust_here;
 
+  // this loop finds the dust band whose outer edge is within our inside range.
   current_dust_band = accreting->dust_head;
   while (current_dust_band != NULL
          && current_dust_band->outer_edge < inside_range)
     current_dust_band = current_dust_band->next_band;
 
+  // if we have no dust band, there's no dust here
   if (current_dust_band == NULL)
     dust_here = false;
+  // otherwise, it depends on the dust record
   else
-    dust_here = current_dust_band->dust_present;
+    dust_here = current_dust_band->has_dust;
 
+  // this loop ORs together all of the dust bands between the first one we found
+  // and the dust band whose inner edge is outside our outside range.
   while (current_dust_band != NULL
          && current_dust_band->inner_edge < outside_range)
   {
-    dust_here = dust_here || current_dust_band->dust_present;
+    dust_here = dust_here || current_dust_band->has_dust;
     current_dust_band = current_dust_band->next_band;
   }
 
+  // return whether or not we found a dust band in our range that still had dust
   return dust_here;
 }
 
-void update_dust_lanes(accretion *accreting, double min, double max, double mass, double crit_mass, double body_inner_bound, double body_outer_bound)
+// Case 1: this node subsumes min and max
+//
+//  node1:     [       ]
+//  min/max:     [   ]
+//
+// We must split this node up into two nodes like so:
+//
+// *node1:     [       ]
+// *min/max:     [   ]
+// 
+//  node1:     [ ]
+//  node2:       [   ]
+//  node3:           [ ]
+dust* split_subsumed_node(dust* node1, double min, double max, bool gas)
 {
-  int         gas;
-  dust_pointer node1,
-              node2,
-              node3;
+  dust *node2, *node3;
+  
+  // make a new dust lane with min and max for the middle chunk
+  node2 = make_dust(min, max);
 
-  accreting->dust_left = false;
-  if (mass > crit_mass)
-    gas = false;
-  else
-    gas = true;
-  node1 = accreting->dust_head;
-  while (node1 != NULL)
+  // handle gas possibility
+  node2->has_gas = node1->has_gas ? gas : false;
+
+  // make another new dust lane that proceeds from max to the outer edge of
+  // node 1, the right edge
+  node3 = make_dust(max, node1->outer_edge);
+  node3->has_gas = node1->has_gas;
+  node3->has_dust = node1->has_dust;
+  node3->next_band = node1->next_band;
+
+  // condense node1's outer edge to the minimum and hook up these nodes in
+  // the order
+  node1->next_band = node2;
+  node2->next_band = node3;
+  node1->outer_edge = min;
+
+  // for the next iteration, begin considering the third node from max to 
+  // the outer edge, node3
+  return node3->next_band;
+}
+
+// Case 2: the node spans across the maximum
+//
+//  node1:       [     ]
+//  min/max:   [    ]
+//
+// This must be split up into two nodes as follows:
+//
+// *node1:       [     ]
+// *min/max:   [    ]
+//  node1:       [  ]
+//  node2:          [  ]
+dust* split_spanning_maximum_node(dust* node1, double max, bool gas)
+{
+  dust* node2;
+  
+  // make a new node for the second half from max to outer_edge
+  node2 = make_dust(max, node1->outer_edge);
+  node2->next_band = node1->next_band;
+  node2->has_dust = node1->has_dust;
+  node2->has_gas = node1->has_gas;
+
+  // arrange for the old node to go from the inner edge to max
+  node1->next_band = node2;
+  node1->outer_edge = max;
+  node1->has_gas = node1->has_gas ? gas : false;
+  node1->has_dust = false;
+
+  // the new right dust band is where we resume
+  return node2->next_band;
+}
+
+// Case 3: the node spans across the minimum
+//
+//  node1:     [      ]
+//  min/max:      [       ]
+//
+// This must be split up into two nodes as follows:
+//  
+// *node1:     [      ]
+// *min/max:      [       ]
+//  node1:     [  ]
+//  node2:        [   ]
+dust* split_spanning_minimum_node(dust* node1, double min, bool gas)
+{
+  dust* node2;
+  
+  // make the second node
+  node2 = make_dust(min, node1->outer_edge);
+  node2->next_band = node1->next_band;
+  node2->has_gas = node1->has_gas ? gas : false;
+
+  // rearrange first node and prepare to resume with the new right dust band
+  node1->next_band = node2;
+  node1->outer_edge = min;
+  return node2->next_band;
+}
+
+/**
+ * Split a dust lane into several dust lanes, and mark the dust as used. Returns
+ * the next dust lane in the list.
+ * 
+ * @param lane     the dust lane to be split, possibly
+ * @param min      the minimum range
+ * @param max      the maximum range
+ * @param has_gas  whether or not there is gas present
+ * @return         the next dust lane, for iteration
+ */
+dust* split_node(dust* lane, double min, double max, bool has_gas)
+{
+  // Case 1: this node subsumes min and max
+  if (lane->inner_edge < min && lane->outer_edge > max)
+    return split_subsumed_node(lane, min, max, has_gas);
+
+  // Case 2: the node spans across the maximum
+  else if (lane->inner_edge < max && lane->outer_edge > max)
+    return split_spanning_maximum_node(lane, max, has_gas);
+
+  // Case 3: the node spans across the minimum
+  else if (lane->inner_edge < min && lane->outer_edge > min)
+    return split_spanning_minimum_node(lane, min, has_gas);
+
+  // Case 4: the node is within or equal to the range
+  //
+  //  node1:      [  ]
+  //  min/max:  [      ]
+  else if (lane->inner_edge >= min && lane->outer_edge <= max)
   {
-    if (node1->inner_edge < min && node1->outer_edge > max)
-    {
-      node2 = malloc(sizeof(dust));
-      node2->inner_edge = min;
-      node2->outer_edge = max;
-      if (node1->gas_present == true)
-        node2->gas_present = gas;
-      else
-        node2->gas_present = false;
-      node2->dust_present = false;
-      node3 = malloc(sizeof(dust));
-      node3->inner_edge = max;
-      node3->outer_edge = node1->outer_edge;
-      node3->gas_present = node1->gas_present;
-      node3->dust_present = node1->dust_present;
-      node3->next_band = node1->next_band;
-      node1->next_band = node2;
-      node2->next_band = node3;
-      node1->outer_edge = min;
-      node1 = node3->next_band;
-    }
-    else if (node1->inner_edge < max && node1->outer_edge > max)
-    {
-      node2 = malloc(sizeof(dust));
-      node2->next_band = node1->next_band;
-      node2->dust_present = node1->dust_present;
-      node2->gas_present = node1->gas_present;
-      node2->outer_edge = node1->outer_edge;
-      node2->inner_edge = max;
-      node1->next_band = node2;
-      node1->outer_edge = max;
-      if (node1->gas_present == true)
-        node1->gas_present = gas;
-      else
-        node1->gas_present = false;
-      node1->dust_present = false;
-      node1 = node2->next_band;
-    }
-    else if (node1->inner_edge < min && node1->outer_edge > min)
-    {
-      node2 = malloc(sizeof(dust));
-      node2->next_band = node1->next_band;
-      node2->dust_present = false;
-      if (node1->gas_present == true)
-        node2->gas_present = gas;
-      else
-        node2->gas_present = false;
-      node2->outer_edge = node1->outer_edge;
-      node2->inner_edge = min;
-      node1->next_band = node2;
-      node1->outer_edge = min;
-      node1 = node2->next_band;
-    }
-    else if (node1->inner_edge >= min && node1->outer_edge <= max)
-    {
-      if (node1->gas_present == true)
-        node1->gas_present = gas;
-      node1->dust_present = false;
-      node1 = node1->next_band;
-    }
-    else if (node1->outer_edge < min || node1->inner_edge > max)
-      node1 = node1->next_band;
+    // Use up the dust
+    lane->has_dust = false;
+
+    // if gas was present, it may not be now.
+    if (lane->has_gas == true)
+      lane->has_gas = has_gas;
+    
+    // proceed
+    return lane->next_band;
   }
-  node1 = accreting->dust_head;
-  while (node1 != NULL)
+
+  // Case 5: No overlap whatsoever
+  // Two possibilities:
+  //
+  //  node1:    [     ]
+  //  min/max:          [    ]
+  //
+  // or:
+  //
+  //  node1:             [  ]
+  //  min/max:   [    ]
+  //
+  // in this case, just move on to the next dust band
+  else if (lane->outer_edge < min || lane->inner_edge > max)
+    return lane->next_band;
+  
+  // if we make it here, perhaps we have modified this lane sufficiently to
+  // the liking of the controlling loop
+  return lane;
+}
+
+// this function coalesces neighbor dust lanes that have or do not have dust
+// and/or gas
+void coalesce_dust_lanes(accretion* accreting, double body_inner_bound, double body_outer_bound)
+{
+  dust* next_lane;
+  
+  for (dust* lane = accreting->dust_head; lane != NULL; lane = lane->next_band)
   {
-    if (node1->dust_present
-         && node1->outer_edge >= body_inner_bound
-              && node1->inner_edge <= body_outer_bound)
+    // if this node has dust and the node is within the body's inner and outer 
+    // boundaries, then there is dust left in this simulation.
+    if (lane->has_dust
+         && lane->outer_edge >= body_inner_bound
+              && lane->inner_edge <= body_outer_bound)
       accreting->dust_left = true;
-    node2 = node1->next_band;
-    if (node2 != NULL)
+    
+    // get the next lane if possible
+    next_lane = lane->next_band;
+    if (next_lane != NULL)
     {
-      if (node1->dust_present == node2->dust_present
-           && node1->gas_present == node2->gas_present)
+      // coalesce these two adjacent dust lanes if they have the same 
+      // combination of having or lacking dust and gas
+      if (lane->has_dust == next_lane->has_dust
+           && lane->has_gas == next_lane->has_gas)
       {
-        node1->outer_edge = node2->outer_edge;
-        node1->next_band = node2->next_band;
-        free(node2);
+        lane->outer_edge = next_lane->outer_edge;
+        lane->next_band = next_lane->next_band;
+        free(next_lane);
       }
     }
-    node1 = node1->next_band;
   }
 }
 
-double collect_dust(accretion *accreting, double last_mass, double a, double e, double crit_mass, dust_pointer dust_band)
+void update_dust_lanes(accretion *accreting, 
+        double min, double max, 
+        double mass, double crit_mass, 
+        double body_inner_bound, double body_outer_bound)
+{
+  // begin asserting that there's no dust left. coalesce_dust_lanes will set
+  // this value to true if it finds any dust during its coalescing maneuver
+  accreting->dust_left = false;
+  
+  // this tracks whether or not this planetoid is growing up to be a gas giant
+  // or if it is sufficiently massive that it's going to be a planetoid
+  bool gas = (mass <= crit_mass);
+  
+  // this loop examines ever dust lane. it splits dust lanes such that our min
+  // and max values lie at the boundaries of the lane. it also consumes the dust
+  // and gas in each lane within the limits as it goes.
+  /*lane = accreting->dust_head;
+  while (lane != NULL)
+    lane = split_node(lane, min, max, gas);
+  */
+  
+  for (dust* lane = accreting->dust_head; 
+       lane != NULL; 
+       lane = split_node(lane, min, max, gas));
+  
+  // this loop detects whether or not there is still dust present in the 
+  // simulation within the overall bounds and simultaneously coalesces neighbor
+  // dust lanes that have or do not have dust and/or gas
+  coalesce_dust_lanes(accreting, body_inner_bound, body_outer_bound);
+}
+
+double collect_dust(accretion *accreting, double last_mass, double a, double e, double crit_mass, dustp dust_band)
 {
   double      mass_density,
               temp1,
@@ -208,11 +386,11 @@ double collect_dust(accretion *accreting, double last_mass, double a, double e, 
     return 0.0;
   else
   {
-    if (dust_band->dust_present == false)
+    if (dust_band->has_dust == false)
       temp_density = 0.0;
     else
       temp_density = accreting->dust_density;
-    if (last_mass < crit_mass || dust_band->gas_present == false)
+    if (last_mass < crit_mass || dust_band->has_gas == false)
       mass_density = temp_density;
     else
       mass_density = K * temp_density / (1.0 + sqrt(crit_mass / last_mass)
