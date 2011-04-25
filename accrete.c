@@ -345,11 +345,6 @@ void update_dust_lanes(accretion *accreting,
   // this loop examines ever dust lane. it splits dust lanes such that our min
   // and max values lie at the boundaries of the lane. it also consumes the dust
   // and gas in each lane within the limits as it goes.
-  /*lane = accreting->dust_head;
-  while (lane != NULL)
-    lane = split_node(lane, min, max, gas);
-  */
-  
   for (dust* lane = accreting->dust_head; 
        lane != NULL; 
        lane = split_node(lane, min, max, gas));
@@ -360,36 +355,50 @@ void update_dust_lanes(accretion *accreting,
   coalesce_dust_lanes(accreting, body_inner_bound, body_outer_bound);
 }
 
-double collect_dust(accretion *accreting, double last_mass, double a, double e, double crit_mass, dustp dust_band)
+double collect_dust(accretion *accreting, 
+        double last_mass, 
+        double a, double e, 
+        double crit_mass, 
+        dustp dust_band)
 {
   double      mass_density,
               temp1,
               temp2,
               temp,
-              temp_density,
+              dust_density,
               bandwidth,
               width,
               volume;
 
   temp = last_mass / (1.0 + last_mass);
+  
+  // 4th root of the last mass / 1 + last mass: reduced mass
   accreting->reduced_mass = pow(temp, (1.0 / 4.0));
+  
+  // recalculate the inner and outer radii based on the reduced mass
   accreting->r_inner = inner_effect_limit(accreting, a, e, accreting->reduced_mass);
   accreting->r_outer = outer_effect_limit(accreting, a, e, accreting->reduced_mass);
+  
+  // fix up the inner radius to be no less than zero
   if (accreting->r_inner < 0.0)
     accreting->r_inner = 0.0;
-  if (dust_band == NULL)
-    return 0.0;
-  else
+  
+  // if this is the last dust band, return 0
+  if (dust_band == NULL) return 0.0;
+  else // otherwise
   {
-    if (dust_band->has_dust == false)
-      temp_density = 0.0;
+    // if we have dust, use the dust density, otherwise zero
+    dust_density = dust_band->has_dust ? accreting->dust_density : 0.0;
+    
+    // if the last mass is below the critical mass, or there's no dust in this 
+    // dust band, the density is the overall accretion density;
+    // otherwise, the mass density is this horrifying formula
+    if (last_mass < crit_mass || !dust_band->has_gas)
+      mass_density = dust_density;
     else
-      temp_density = accreting->dust_density;
-    if (last_mass < crit_mass || dust_band->has_gas == false)
-      mass_density = temp_density;
-    else
-      mass_density = K * temp_density / (1.0 + sqrt(crit_mass / last_mass)
+      mass_density = K * dust_density / (1.0 + sqrt(crit_mass / last_mass)
                                          * (K - 1.0));
+    
     if (dust_band->outer_edge <= accreting->r_inner
          || dust_band->inner_edge >= accreting->r_outer)
       return collect_dust(accreting, last_mass, a, e, crit_mass, dust_band->next_band);
@@ -431,7 +440,10 @@ double critical_limit(double orb_radius, double eccentricity, double star_lum_r)
   return B * pow(temp, -0.75);
 }
 
-void accrete_dust(accretion *accreting, double *seed_mass, double a, double e, double crit_mass, double body_inner_bound, double body_outer_bound)
+void accrete_dust(accretion *accreting, 
+        double *seed_mass, 
+        double a, double e, double crit_mass, 
+        double body_inner_bound, double body_outer_bound)
 {
   double      new_mass,
               temp_mass;
@@ -452,7 +464,10 @@ void accrete_dust(accretion *accreting, double *seed_mass, double a, double e, d
   update_dust_lanes(accreting, accreting->r_inner, accreting->r_outer, (*seed_mass), crit_mass, body_inner_bound, body_outer_bound);
 }
 
-void coalesce_planetesimals(accretion *accreting, double a, double e, double mass, double crit_mass, double star_lum_r, double body_inner_bound, double body_outer_bound)
+void coalesce_planetesimals(accretion *accreting, 
+        double a, double e, double mass, 
+        double crit_mass, double star_lum_r, 
+        double body_inner_bound, double body_outer_bound)
 {
   planet_pointer node1 = NULL;
   planet_pointer node2 = NULL;
