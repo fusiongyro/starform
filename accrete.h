@@ -11,9 +11,9 @@ typedef struct dust_record
 {
   double      inner_edge;
   double      outer_edge;
-  int         dust_present;
-  int         gas_present;
-  dust_pointer next_band;
+  bool        has_dust;
+  bool        has_gas;
+  dustp next_band;
 } dust;
 
 typedef struct
@@ -28,7 +28,7 @@ typedef struct
   double      reduced_mass;
   double      dust_density;
   double      cloud_eccen;
-  dust_pointer dust_head;  
+  dustp dust_head;  
 } accretion;
 
 
