@@ -1,3 +1,47 @@
+Starform is an implementation of the Accrete algorithm. I've taken the code by
+Chris Croughton and updated it according to my own criteria. I may not know 
+much about the math, but I know a few things about programming, so my version
+exists in search of the following goals:
+
+ 1. To have a good quality, documented, readable, comprehensible implementation
+    of Accrete, useful for personal study, expansion, testing, embedding, and
+    in general playing.
+
+ 2. To showcase a high-quality codebase that can be used to direct ports to 
+    other languages as well as embed or call from other languages.
+ 
+ 3. To showcase modern C99 style and achieve an implementation that compiles
+    without a lot of work under modern Unix operating systems.
+
+
+In pursuit of these goals, my changes have mostly been as follows:
+
+  - General refactoring, including renaming functions, breaking large functions 
+    into smaller ones, narrowing interfaces and interdependencies, and refining
+    code responsibilities
+
+  - Removing support for MS-DOS and other obscure/useless platforms.
+
+  - Making the code more "objecty," removing global variables, doing less 
+    up-front calculation in favor of lazier alternatives where possible.
+
+  - Making starform into libstarform and changing the original utility into
+    a shell that simply calls this library.
+
+
+From here my goal is to produce a high-quality implementation of Starform in 
+several other languages, namely Smalltalk, Common Lisp and Haskell, as at least
+one of these four languages will certainly continue to exist in the next hundred
+years.
+
+Finally, I intend to take the completed source code in all four languages and 
+have six copies engraved in steel and launched into space in all directions.
+Therefore, this code is licensed under the terms of the Revised BSD License.
+
+Chris's README is below.
+
+--------------------------------------------------------------------------------
+
 Starform (also known as Accrete) was created by Matt Burdick in 1988.  Since
 then it has been hacked about by many people.  This version is based on the
 original released 'starform' code, as far as I know, with my hacks to it to
