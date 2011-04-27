@@ -362,7 +362,7 @@ void fixup_accretion_parameters(accretion *accreting,
         double last_mass, double a, double e)
 {
   double temp;
-  
+
   temp = last_mass / (1.0 + last_mass);
   
   // 4th root of the last mass / 1 + last mass: reduced mass
@@ -376,7 +376,7 @@ void fixup_accretion_parameters(accretion *accreting,
   if (accreting->r_inner < 0.0)
     accreting->r_inner = 0.0;
 }
-
+  
 double collect_dust(accretion *accreting, 
         double last_mass, 
         double a, double e, 
@@ -388,45 +388,45 @@ double collect_dust(accretion *accreting,
   // base case: if this is the last dust band, return 0
   if (dust_band == NULL) return 0.0;
   
-  // if we have dust, use the dust density, otherwise zero
+    // if we have dust, use the dust density, otherwise zero
   double dust_density = dust_band->has_dust ? accreting->dust_density : 0.0;
-
-  // if the last mass is below the critical mass, or there's no dust in this 
-  // dust band, the density is the overall accretion density;
-  // otherwise, the mass density is this horrifying formula
-  double mass_density = dust_density;  
-  if (last_mass >= crit_mass || dust_band->has_gas)
-    mass_density = K * dust_density / (1.0 + sqrt(crit_mass / last_mass)
-                                       * (K - 1.0));
-
+    
+    // if the last mass is below the critical mass, or there's no dust in this 
+    // dust band, the density is the overall accretion density;
+    // otherwise, the mass density is this horrifying formula
+    double mass_density = dust_density;
+    if (last_mass >= crit_mass && dust_band->has_gas)
+      mass_density = K * dust_density / (1.0 + sqrt(crit_mass / last_mass)
+                                         * (K - 1.0));
+    
   // if the outer edge exceeds the accretion inner limit or the inner edge is 
   // outside the outer limit, just collect the dust from the next band
-  if (dust_band->outer_edge <= accreting->r_inner
-       || dust_band->inner_edge >= accreting->r_outer)
-    return collect_dust(accreting, last_mass, a, e, crit_mass, dust_band->next_band);
-  else
-  {
-    double bandwidth = (accreting->r_outer - accreting->r_inner);
-    double outer_gap = accreting->r_outer - dust_band->outer_edge;
-
-    double width = bandwidth - (outer_gap < 0.0 ? 0.0 : outer_gap);
+    if (dust_band->outer_edge <= accreting->r_inner
+         || dust_band->inner_edge >= accreting->r_outer)
+      return collect_dust(accreting, last_mass, a, e, crit_mass, dust_band->next_band);
+    else
+    {
+      double bandwidth = (accreting->r_outer - accreting->r_inner);
+      double outer_gap = accreting->r_outer - dust_band->outer_edge;
+      
+      double width = bandwidth - (outer_gap < 0.0 ? 0.0 : outer_gap);
 
     // account for the gap between the inner edge and the start of 
     // the accretion radius
-    double gap = dust_band->inner_edge - accreting->r_inner;
-    width = width - (gap < 0.0 ? 0.0 : gap);
+      double gap = dust_band->inner_edge - accreting->r_inner;
+      width = width - (gap < 0.0 ? 0.0 : gap);
 
     // calculate the area of a cross-section, and the volume
-    double area = 4.0 * PI * pow(a, 2.0) * accreting->reduced_mass
-        * (1.0 - e * (outer_gap - gap) / bandwidth);
-    double volume = area * width;
+      double area = 4.0 * PI * pow(a, 2.0) * accreting->reduced_mass
+          * (1.0 - e * ((outer_gap < 0.0 ? 0.0 : outer_gap) - (gap < 0.0 ? 0.0 : gap)) / bandwidth);
+      double volume = area * width;
 
     // calculate the total mass of this lane plus the mass of the next lane
-    return volume * mass_density
-           + collect_dust(accreting, last_mass, a, e, crit_mass,
-                           dust_band->next_band);
+      return volume * mass_density
+             + collect_dust(accreting, last_mass, a, e, crit_mass,
+                             dust_band->next_band);
+    }
   }
-}
 
 /*--------------------------------------------------------------------------*/
 /*   Orbital radius is in AU, eccentricity is unitless, and the stellar     */
