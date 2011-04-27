@@ -76,9 +76,9 @@ planet* generate_stellar_system(stellar_system* system, unsigned long random_see
     }
     else
     {
-      planet->density = volume_density(planet->mass, planet->radius);
       planet->radius = kothari_radius(planet->mass, planet->gas_giant, 
                                       planet->orbit_zone);
+      planet->density = volume_density(planet->mass, planet->radius);
     }
     planet->orb_period = period(planet->a, planet->mass, system->star_mass_r);
     planet->day = day_length(system, planet->mass, planet->radius, planet->e,
