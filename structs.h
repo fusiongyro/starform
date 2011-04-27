@@ -3,10 +3,7 @@
 
 #include <stdbool.h>
 
-typedef struct dust_record *dustp;
-typedef struct planets_record *planet_pointer;
-
-typedef struct planets_record
+typedef struct planet_s
 {
   double      a;		/* semi-major axis of the orbit (in AU) */
   double      e;		/* eccentricity of the orbit         */
@@ -33,10 +30,9 @@ typedef struct planets_record
   double      hydrosphere;	/* fraction of surface covered       */
   double      cloud_cover;	/* fraction of surface covered       */
   double      ice_cover;	/* fraction of surface covered       */
-  planet_pointer first_moon;
-  planet_pointer next_planet;
-}
-planets;
+  struct planet_s* first_moon;
+  struct planet_s* next_planet;
+} planet;
 
 typedef struct 
 {

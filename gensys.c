@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 
+#include "gensys.h"
 #include "structs.h"
 #include "accrete.h"
 #include "enviro.h"
@@ -34,10 +35,10 @@ void setup_seed(stellar_system* system, unsigned long random_seed)
   system->random_seed = random_seed;
 }
 
-planet_pointer generate_stellar_system(stellar_system* system, unsigned long random_seed)
+planet* generate_stellar_system(stellar_system* system, unsigned long random_seed)
 {
-  planet_pointer first_planet;
-  planet_pointer planet;
+  planet* first_planet;
+  planet* planet;
   double      outer_dust_limit;
 
   setup_seed(system, random_seed);
@@ -54,7 +55,7 @@ planet_pointer generate_stellar_system(stellar_system* system, unsigned long ran
   system->star_temp = floor(system->star_temp);
   sprintf(system->star_class, "%.16s", find_star_class(system->star_temp));
   outer_dust_limit = stellar_dust_limit(system->star_mass_r);
-  first_planet = dist_planetary_masses(system, 0.0, outer_dust_limit);
+  first_planet = distribute_planetary_masses(system, 0.0, outer_dust_limit);
   system->main_seq_life = 1.0E10 * (system->star_mass_r / system->star_lum_r);
   if (system->main_seq_life > 6.0E9)
     system->star_age = random_number(1.0E9, 6.0E9);
@@ -130,7 +131,7 @@ planet_pointer generate_stellar_system(stellar_system* system, unsigned long ran
 #else
       planet->first_moon = do_dist_moon_masses(planet->mass, planet->radius);
       {
-	planet_pointer moon = planet->first_moon;
+	planet* moon = planet->first_moon;
 
 	while (moon)
 	{

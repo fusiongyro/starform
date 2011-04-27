@@ -1,4 +1,7 @@
-#include "data.h"
+#ifndef __ENVIRO_H
+#define __ENVIRO_H
+
+#include "gensys.h"
 
 double luminosity(double mass_ratio);
 int  orb_zone(stellar_system* system, double orb_radius);
@@ -18,5 +21,7 @@ int  grnhouse(int zone, double orb_radius, double r_greenhouse);
 double vol_inventory(double mass, double escape_vel, double rms_vel, double stellar_mass, int zone, int greenhouse_effect);
 double pressure(double volatile_gas_inventory, double equat_radius, double gravity);
 double boiling_point(double surf_pressure);
-void iterate_surface_temp(stellar_system* system, planet_pointer* planet);
-void iterate_surface_temp_moon(stellar_system* system, planet_pointer* primary, planet_pointer * planet);
+void iterate_surface_temp(stellar_system* system, planet** planet);
+void iterate_surface_temp_moon(stellar_system* system, planet** primary, planet* * planet);
+
+#endif
