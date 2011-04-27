@@ -1,12 +1,11 @@
-
 #include <stdbool.h>
-#include        <stdio.h>
-#include	<math.h>
-#include	"const.h"
-#include	"structs.h"
+#include <stdio.h>
+#include <math.h>
 
+#include "const.h"
+#include "structs.h"
 #include "utils.h"
-#include "data.h"
+#include "enviro.h"
 
 double luminosity(double mass_ratio)
 {
@@ -629,7 +628,7 @@ opacity(double molecular_weight, double surf_pressure)
 /*       planet->boil_point                                                 */
 /*--------------------------------------------------------------------------*/
 
-void iterate_surface_temp(stellar_system* system, planet_pointer * planet)
+void iterate_surface_temp(stellar_system* system, planet* * planet)
 {
   double      surf1_temp;
   double      effective_temp;
@@ -675,7 +674,7 @@ void iterate_surface_temp(stellar_system* system, planet_pointer * planet)
   (*planet)->surf_temp = surf1_temp;
 }
 
-void iterate_surface_temp_moon(stellar_system* system, planet_pointer * primary, planet_pointer * planet)
+void iterate_surface_temp_moon(stellar_system* system, planet* * primary, planet* * planet)
 {
   double      surf1_temp;
   double      effective_temp;

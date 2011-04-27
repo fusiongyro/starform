@@ -56,7 +56,7 @@ int main(int argc, char **argv)
   while (nstars-- > 0)
   {
     stellar_system system;
-    planet_pointer first_planet = generate_stellar_system(&system, random_seed);
+    planet* first_planet = generate_stellar_system(&system, random_seed);
     display_system(&system, first_planet);
   }
   return 0;

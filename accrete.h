@@ -3,23 +3,23 @@
 
 #include "structs.h"
 #include "utils.h"
-#include "data.h"
+#include "gensys.h"
 
 extern flags args;
 
-typedef struct dust_record
+typedef struct dust_s
 {
   double      inner_edge;
   double      outer_edge;
   bool        has_dust;
   bool        has_gas;
-  dustp next_band;
+  struct dust_s* next_band;
 } dust;
 
 typedef struct
 {
   /* A few variables global to the entire program:                */
-  planet_pointer planet_head;
+  planet* planet_head;
   
   /* Now for some variables global to the accretion process:      */
   int         dust_left;
@@ -28,7 +28,7 @@ typedef struct
   double      reduced_mass;
   double      dust_density;
   double      cloud_eccen;
-  dustp dust_head;  
+  dust* dust_head;  
 } accretion;
 
 
@@ -37,12 +37,12 @@ typedef struct
 
 double stellar_dust_limit(double star_mass_r);
 
-planet_pointer dist_planetary_masses(
+planet* distribute_planetary_masses(
   stellar_system* system,
   double inner_dust, 
   double outer_dust);
 
-planet_pointer do_dist_moon_masses(
+planet* do_dist_moon_masses(
   double planetary_mass, 
   double plan_radius);
 

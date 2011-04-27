@@ -7,7 +7,7 @@
 
 #include "elements.h"
 #include "enviro.h"
-#include "data.h"
+#include "gensys.h"
 
 #define	MAX_EXP_DIGS	3
 #define	MAX_MAN_DIGS	20
@@ -132,7 +132,7 @@ double soft(double v, double max, double min)
   return (lim(2*dv/dm-1)+1)/2 * dm + min;
 }
 
-Temp get_temp_range(planet_pointer planet)
+Temp get_temp_range(planet* planet)
 {
   double pressmod = 1 / sqrt(1 + 20 * planet->surf_pressure/1000.0);
   double ppmod    = 1 / sqrt(10 + 5 * planet->surf_pressure/1000.0);
@@ -270,7 +270,7 @@ void text_list_stuff(
   }
 }
 
-void text_describe_planet(stellar_system *system, char *start, planet_pointer node1)
+void text_describe_planet(stellar_system *system, char *start, planet* node1)
 {
   start = start;
 
@@ -358,9 +358,9 @@ void text_describe_planet(stellar_system *system, char *start, planet_pointer no
   }
 }
 
-void text_describe_system(stellar_system* system, planet_pointer first_planet)
+void text_describe_system(stellar_system* system, planet* first_planet)
 {
-  planet_pointer node1;
+  planet* node1;
   int         counter;
 
   printf("                         SYSTEM  CHARACTERISTICS\n");
@@ -405,7 +405,7 @@ void text_describe_system(stellar_system* system, planet_pointer first_planet)
        node1 != NULL;
        node1 = node1->next_planet, counter++)
   {
-    planet_pointer moon;
+    planet* moon;
     int         num = 0;
 
     printf("Planet %d\t", counter);
@@ -420,7 +420,7 @@ void text_describe_system(stellar_system* system, planet_pointer first_planet)
   }
 }
 
-void lisp_describe_planet(char *opar, char *bstr, planet_pointer node1)
+void lisp_describe_planet(char *opar, char *bstr, planet* node1)
 {
   printf("  %s boolean:\n", bstr);
   printf("  %sis-gas-giant %d%s\n", opar, node1->gas_giant, CP);
@@ -479,9 +479,9 @@ void lisp_describe_planet(char *opar, char *bstr, planet_pointer node1)
 	 opar, engineer_notation(node1->albedo, 3), CP);
 }
 
-void lisp_describe_system(stellar_system* system, planet_pointer first_planet)
+void lisp_describe_system(stellar_system* system, planet* first_planet)
 {
-  planet_pointer node1;
+  planet* node1;
   int         counter;
 
   printf("%splanetary-system\n", OP);
@@ -510,7 +510,7 @@ void lisp_describe_system(stellar_system* system, planet_pointer first_planet)
        node1 != NULL;
        node1 = node1->next_planet, counter++)
   {
-    planet_pointer moon;
+    planet* moon;
     int         num = 0;
 
     printf(" %splanet ; #%d\n",
@@ -529,7 +529,7 @@ void lisp_describe_system(stellar_system* system, planet_pointer first_planet)
   printf("%s\n", CP);
 }
 
-void display_system(stellar_system* system, planet_pointer first_planet)
+void display_system(stellar_system* system, planet* first_planet)
 {
   if (args.display_lisp)
     lisp_describe_system(system, first_planet);
