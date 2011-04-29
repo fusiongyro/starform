@@ -13,8 +13,6 @@
 #include "accrete.h"
 #include "const.h"
 
-#define testfp(x)
-
 dust* make_dust(double inner_edge, double outer_edge);
 
 /**
@@ -361,12 +359,12 @@ void update_dust_lanes(accretion *accreting,
 void fixup_accretion_parameters(accretion *accreting, 
         double last_mass, double a, double e)
 {
-  double temp;
+  double temperature;
 
-  temp = last_mass / (1.0 + last_mass);
+  temperature = last_mass / (1.0 + last_mass);
   
   // 4th root of the last mass / 1 + last mass: reduced mass
-  accreting->reduced_mass = pow(temp, (1.0 / 4.0));
+  accreting->reduced_mass = pow(temperature, (1.0 / 4.0));
   
   // recalculate the inner and outer radii based on the reduced mass
   accreting->r_inner = inner_effect_limit(accreting, a, e, accreting->reduced_mass);
@@ -436,12 +434,12 @@ double collect_dust(accretion *accreting,
 /*--------------------------------------------------------------------------*/
 double critical_limit(double orb_radius, double eccentricity, double star_lum_r)
 {
-  double      temp,
+  double      temperature,
               perihelion_dist;
 
   perihelion_dist = (orb_radius - orb_radius * eccentricity);
-  temp = perihelion_dist * sqrt(star_lum_r);
-  return B * pow(temp, -0.75);
+  temperature = perihelion_dist * sqrt(star_lum_r);
+  return B * pow(temperature, -0.75);
 }
 
 /**
@@ -515,13 +513,13 @@ void coalesce_planetesimals(accretion *accreting,
       verbose_print("Collision between two planetesimals!\n");
 
       a3 = (node1->mass + mass) / ((node1->mass / node1->a) + (mass / a));
-      double temp = node1->mass * sqrt(node1->a) * sqrt(1.0 - pow(node1->e, 2.0));
-      temp = temp + (mass * sqrt(a) * sqrt(sqrt(1.0 - pow(e, 2.0))));
-      temp = temp / ((node1->mass + mass) * sqrt(a3));
-      temp = 1.0 - pow(temp, 2.0);
-      if (temp < 0.0 || temp >= 1.0)
-        temp = 0.0;
-      e = sqrt(temp);
+      double temperature = node1->mass * sqrt(node1->a) * sqrt(1.0 - pow(node1->e, 2.0));
+      temperature = temperature + (mass * sqrt(a) * sqrt(sqrt(1.0 - pow(e, 2.0))));
+      temperature = temperature / ((node1->mass + mass) * sqrt(a3));
+      temperature = 1.0 - pow(temperature, 2.0);
+      if (temperature < 0.0 || temperature >= 1.0)
+        temperature = 0.0;
+      e = sqrt(temperature);
       
       double seed_mass = node1->mass + mass;
       accrete_dust(accreting, &seed_mass, a3, e, star_lum_r,

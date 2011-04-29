@@ -152,14 +152,14 @@ char* sort_elements_by_abundance(char *list)
   return sort_elements(list, compare_by_abundance);
 }
 
-char* find_gas_elements_at_temp(char *out, double temp)
+char* find_gas_elements_at_temp(char *out, double temperature)
 {
   element* p = elements;
 
   strcpy(out, "");
   for (; p->num > 0; p++)
   {
-    if (p->boil >= 0 && p->boil < temp)
+    if (p->boil >= 0 && p->boil < temperature)
     {
       if (*out)
 	strcat(out, " ");
@@ -169,16 +169,16 @@ char* find_gas_elements_at_temp(char *out, double temp)
   return out;
 }
 
-char* find_liquid_elements_at_temp(char *out, double temp)
+char* find_liquid_elements_at_temp(char *out, double temperature)
 {
   element* p = elements;
 
   strcpy(out, "");
   for (; p->num > 0; p++)
   {
-    if (p->melt >= 0 && p->melt < temp)
+    if (p->melt >= 0 && p->melt < temperature)
     {
-      if (p->boil >= 0 && p->boil > temp)
+      if (p->boil >= 0 && p->boil > temperature)
       {
 	if (*out)
 	  strcat(out, " ");
@@ -189,14 +189,14 @@ char* find_liquid_elements_at_temp(char *out, double temp)
   return out;
 }
 
-char* find_solid_elements_at_temp(char *out, double temp)
+char* find_solid_elements_at_temp(char *out, double temperature)
 {
   element* p = elements;
 
   strcpy(out, "");
   for (; p->num > 0; p++)
   {
-    if (p->melt > 0 && p->melt > temp)
+    if (p->melt > 0 && p->melt > temperature)
     {
       if (*out)
 	strcat(out, " ");

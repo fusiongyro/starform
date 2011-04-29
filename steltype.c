@@ -26,21 +26,21 @@ stellar_type* find_stellar_type_by_mass(double mass)
   return p->star_class ? p : NULL;
 }
 
-stellar_type* find_stellar_type_by_temp(double temp)
+stellar_type* find_stellar_type_by_temp(double temperature)
 {
   stellar_type *p = STAR_TYPES;
 
-  while (p->star_class && temp <= p->temp)
+  while (p->star_class && temperature <= p->temp)
     p++;
   return p->star_class ? p : NULL;
 }
 
-const char* find_star_class(double temp)
+const char* find_star_class(double temperature)
 {
   static char star_class[16];
   double      dm;
   int         sub;
-  stellar_type *p = find_stellar_type_by_temp(temp);
+  stellar_type *p = find_stellar_type_by_temp(temperature);
 
   if (!p)
     return NULL;
@@ -52,7 +52,7 @@ const char* find_star_class(double temp)
   
   /* p -> smallest star with more mass than wanted */
   dm = p->temp - p[1].temp;
-  sub = (int)(10 * (p->temp - temp) / dm);
+  sub = (int)(10 * (p->temp - temperature) / dm);
 
   sprintf(star_class, "%c%d", p->star_class[0], sub);
   return star_class;

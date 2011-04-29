@@ -33,7 +33,7 @@
 #define GAS_RETENTION_THRESHOLD (5.0)   /* ratio of esc vel to RMS vel */
 #define GAS_GIANT_ALBEDO        (0.5)   /* albedo of a gas giant    */
 #define CLOUD_ALBEDO            (0.52)
-#define ROCKY_AIRLESS_ALBEDO    (0.07)
+#define AIRLESS_ROCKY_ALBEDO    (0.07)
 #define ROCKY_ALBEDO            (0.15)
 #define WATER_ALBEDO            (0.04)
 #define AIRLESS_ICE_ALBEDO      (0.5)

@@ -16,6 +16,6 @@ typedef struct
 
 extern stellar_type STAR_TYPES[];
 
-const char* find_star_class(double temp);
+const char* find_star_class(double temperature);
 
 #endif
