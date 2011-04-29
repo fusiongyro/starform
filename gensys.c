@@ -67,7 +67,7 @@ planet* generate_stellar_system(stellar_system* system, unsigned long random_see
   system->r_greenhouse = system->r_ecosphere * GREENHOUSE_EFFECT_CONST;
   for (planet = first_planet; planet != NULL; planet = planet->next_planet)
   {
-    planet->orbit_zone = orb_zone(system, planet->a);
+    planet->orbit_zone = orbital_zone(system, planet->a);
     if (planet->gas_giant)
     {
       planet->density = empirical_density(system, planet->mass, planet->a, 
@@ -87,9 +87,9 @@ planet* generate_stellar_system(stellar_system* system, unsigned long random_see
 			     system->star_mass_r);
     planet->resonant_period = system->resonance;
     planet->axial_tilt = inclination(planet->a);
-    planet->esc_velocity = escape_vel(planet->mass, planet->radius);
+    planet->esc_velocity = escape_velocity(planet->mass, planet->radius);
     planet->surf_accel = acceleration(planet->mass, planet->radius);
-    planet->rms_velocity = rms_vel(system, MOL_NITROGEN, planet->a);
+    planet->rms_velocity = rms_velocity(system, MOL_NITROGEN, planet->a);
     planet->molec_weight = molecule_limit(planet->mass, planet->radius);
     if ((planet->gas_giant))
     {
@@ -105,7 +105,7 @@ planet* generate_stellar_system(stellar_system* system, unsigned long random_see
     else
     {
       planet->surf_grav = gravity(planet->surf_accel);
-      planet->greenhouse_effect = grnhouse(planet->orbit_zone, planet->a, 
+      planet->greenhouse_effect = greenhouse(planet->orbit_zone, planet->a, 
                                            system->r_greenhouse);
       planet->volatile_gas_inventory = vol_inventory(planet->mass, 
                                                      planet->esc_velocity, 
