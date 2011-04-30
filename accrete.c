@@ -638,11 +638,11 @@ planet* do_dist_moon_masses(double planetary_mass, double plan_radius)
   planet* head;
   planet* moon;
   planet* last;
-  volatile double pmass = planetary_mass * SUN_MASS_IN_EARTH_MASSES;
-  volatile double prad = plan_radius / KM_PER_AU;
-  volatile double maxdist = sqrt(pmass) / 200;  /* max. moon distance in AU */
-  volatile double mindist = prad * random_number(2.5, 10);
-  volatile double lastrad = mindist;
+  double pmass = planetary_mass * SUN_MASS_IN_EARTH_MASSES;
+  double prad = plan_radius / KM_PER_AU;
+  double maxdist = sqrt(pmass) / 200;  /* max. moon distance in AU */
+  double mindist = prad * random_number(2.5, 10);
+  double lastrad = mindist;
   int         maxcount = (int)sqrt(pmass * 10 + 5) + 1;
   int         count = 0;
 
@@ -662,15 +662,15 @@ planet* do_dist_moon_masses(double planetary_mass, double plan_radius)
 
   while (pmass > 0.001 && count < maxcount && lastrad < maxdist)
   {
-    volatile double maxfac = sqrt((lastrad - prad) / maxdist) / 8;
-    volatile double massmin = 1e17 / EARTH_MASS_IN_GRAMS;
-    volatile double massmax = random_number(pmass / 1e6,
+    double maxfac = sqrt((lastrad - prad) / maxdist) / 8;
+    double massmin = 1e17 / EARTH_MASS_IN_GRAMS;
+    double massmax = random_number(pmass / 1e6,
                                             pmass * maxfac);
-    volatile double mmin = pow(massmin, 1.0 / 4);
-    volatile double mmax = pow(massmax, 1.0 / 4);
-    volatile double mass = pow(random_number(mmin, mmax), 4);
+    double mmin = pow(massmin, 1.0 / 4);
+    double mmax = pow(massmax, 1.0 / 4);
+    double mass = pow(random_number(mmin, mmax), 4);
 
-    volatile double dist = sqrt(mass) * 50000 / KM_PER_AU;
+    double dist = sqrt(mass) * 50000 / KM_PER_AU;
 
     if (args.verbose)
     {
