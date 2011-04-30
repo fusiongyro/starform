@@ -25,12 +25,7 @@ typedef struct temperature_s
 void verbose_print(const char* message)
 {
   if (args.verbose)
-  {
-    if (args.display_lisp)
-      printf(";%s\n", message);
-    else
-      printf("%s\n", message);
-  }
+    printf("%s\n", message);
 }
 
 char* engineer_notation(double d, int p)
@@ -155,8 +150,7 @@ temperature get_temp_range(planet* planet)
   return t;
 }
 
-void text_list_stuff(
-  stellar_system* system,
+void list_chemical_composition(stellar_system* system,
   double temperature, double min_weight, double pressure,
   double orbital_radius, double escape_vel, double star_age)
 {
@@ -332,7 +326,7 @@ void text_describe_planet(stellar_system *system, char *start, planet* node1)
     printf("   Cloud cover percentage:\t%4.2f\n",
      (node1->cloud_cover * 100));
     printf("   Ice cover percentage:\t%4.2f\n", (node1->ice_cover * 100));
-    text_list_stuff(system, node1->surf_temp - KELVIN_CELCIUS_DIFFERENCE,
+    list_chemical_composition(system, node1->surf_temp - KELVIN_CELCIUS_DIFFERENCE,
         node1->molec_weight,
         node1->surf_pressure,
         node1->a,
@@ -341,7 +335,7 @@ void text_describe_planet(stellar_system *system, char *start, planet* node1)
   }
 }
 
-void text_describe_system(stellar_system* system, planet* first_planet)
+void display_system(stellar_system* system, planet* first_planet)
 {
   planet* node1;
   int         counter;
@@ -401,104 +395,4 @@ void text_describe_system(stellar_system* system, planet* first_planet)
     }
     printf("\n\n");
   }
-}
-
-void lisp_describe_planet(planet* node1)
-{
-  printf("  ; boolean:\n");
-  printf("  (is-gas-giant %d)\n", node1->gas_giant);
-  printf("  ; orbital statistics:\n");
-  printf("  (mean-orbit-radius %s) ; km\n",
-   engineer_notation(node1->a * KM_PER_AU, 6));
-  printf("  (orbit-eccentricity %s)\n",
-   engineer_notation(node1->e, 6));
-  printf("  (axial-tilt %d) ; degrees\n",
-   node1->axial_tilt);
-  printf("  (orbital-period %s) ; Earth days\n",
-   engineer_notation(node1->orb_period, 6));
-  printf("  (rotation-period %s) ; Earth hours\n",
-   engineer_notation(node1->day, 6));
-  printf("  (is-resonant %d)\n", node1->resonant_period);
-  printf("  ; planetary measurements:\n");
-  printf("  (mass %s) ; kg\n",
-   engineer_notation(node1->mass * SOLAR_MASS_IN_GRAMS / 1000.0, 6));
-  printf("  (equatorial-radius %s) ; km\n", engineer_notation(node1->radius, 6));
-  printf("  (density %s) ; g/cm3\n", engineer_notation(node1->density, 6));
-  printf("  ; planetary environment:\n");
-  printf("  (escape-velocity %s) ; km/sec\n",
-   engineer_notation(node1->esc_velocity / CM_PER_KM, 6));
-  printf("  (min-molecular-weight-retained %s)\n",
-   engineer_notation(node1->molec_weight, 3));
-  printf("  (surface-acceleration %s) ; cm/sec2\n",
-   engineer_notation(node1->surf_accel, 6));
-  if (!node1->gas_giant)
-  {
-    printf("  (surface-gravity %s) ; Earth gees\n",
-     engineer_notation(node1->surf_grav, 3));
-    printf("  (h2o-boils %s) ; degrees celcius\n",
-     engineer_notation(node1->boil_point - KELVIN_CELCIUS_DIFFERENCE, 3));
-    printf("  (surface-pressure %s) ; Earth atmospheres\n",
-     engineer_notation(node1->surf_pressure / 1000.0, 3));
-    if (node1->greenhouse_effect && node1->surf_pressure > 0.0)
-      printf("  (greenhouse 1)\n");
-    else
-      printf("  (greenhouse 0)\n");
-    printf("  (surface-temperature %s) ; degrees celcius\n",
-     engineer_notation(node1->surf_temp - KELVIN_CELCIUS_DIFFERENCE, 3));
-    printf("  (hydrosphere %s)\n", engineer_notation(node1->hydrosphere, 3));
-    printf("  (cloud-cover %s)\n", engineer_notation(node1->cloud_cover, 3));
-    printf("  (ice-cover %s)\n",   engineer_notation(node1->ice_cover, 3));
-  }
-  printf("  (albedo %s)\n", engineer_notation(node1->albedo, 3));
-}
-
-void lisp_describe_system(stellar_system* system, planet* first_planet)
-{
-  planet* node1;
-  int         counter;
-
-  printf("(planetary-system\n");
-  printf(" (sun\n");
-  printf("  (mass %s) ; kg\n",
-   engineer_notation(system->star_mass_r * SOLAR_MASS_IN_GRAMS / 1000.0, 6));
-  printf("  (radius %s) ; km\n",
-   engineer_notation(system->star_radius_r
-         * SOLAR_RADIUS_IN_METRES / 1000.0, 6));
-  printf("  (temperature %.0f) ; K\n", system->star_temp);
-  printf("  (luminosity %s) ; * SOL luminosity\n",
-   engineer_notation(system->star_lum_r, 6));
-  printf("  (lifetime %s) ; years\n",
-   engineer_notation(system->main_seq_life, 6));
-  printf("  (current-age %s) ; years\n",
-   engineer_notation(system->star_age, 6));
-  printf("  (ecosphere-radius %s) ; km\n",
-   engineer_notation(system->r_ecosphere * KM_PER_AU, 6));
-  printf(" )\n");
-  for (node1 = first_planet, counter = 1;
-       node1 != NULL;
-       node1 = node1->next_planet, counter++)
-  {
-    planet* moon;
-    int         num = 0;
-
-    printf(" (planet ; #%d\n", counter);
-    lisp_describe_planet(node1);
-    printf(" )\n");
-    for (moon = node1->first_moon; moon; moon = moon->next_planet)
-    {
-      num++;
-      printf(" (moon ; #%d-%d\n", counter, num);
-      lisp_describe_planet(moon);
-      printf(" )\n");
-    }
-  }
-  printf(")\n");
-}
-
-void display_system(stellar_system* system, planet* first_planet)
-{
-  if (args.display_lisp)
-    lisp_describe_system(system, first_planet);
-  else
-    text_describe_system(system, first_planet);
 }
