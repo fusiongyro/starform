@@ -381,7 +381,7 @@ double boiling_point(double surf_pressure)
 }
 
 /*--------------------------------------------------------------------------*/
-/*   This function is Fogg's eq.22.  Given the volatile gas inventory and   */
+/*   This function is Fogg's eq.22.  Given the gas inventory and   */
 /*   planetary radius of a planet (in Km), this function returns the        */
 /*   fraction of the planet covered with water.                             */
 /*   I have changed the function very slightly:  the fraction of Earth's    */

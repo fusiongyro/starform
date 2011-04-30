@@ -98,7 +98,7 @@ char* engineer_notation(double d, int p)
 
 double local_bp(double bp_at_stp, double surf_pressure)
 {
-  volatile double surface_pressure_in_bars;
+  double surface_pressure_in_bars;
   double      bp;
 
   surface_pressure_in_bars = surf_pressure / MILLIBARS_PER_BAR;
