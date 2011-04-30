@@ -43,7 +43,7 @@ planet* generate_stellar_system(stellar_system* system, unsigned long random_see
 
   setup_seed(system, random_seed);
 
-  system->star_mass_r = random_number(0.6, 1.3);	/* was 0.6, 1.3 */
+  system->star_mass_r = random_number(0.6, 1.3);  /* was 0.6, 1.3 */
   system->star_radius_r = about(pow(system->star_mass_r, 1.0 / 3.0), 0.05);
   /* for some unknown reason, only 3 digits wanted... */
   system->star_radius_r = floor(system->star_radius_r * 1000.0) / 1000.0;
@@ -82,9 +82,9 @@ planet* generate_stellar_system(stellar_system* system, unsigned long random_see
     }
     planet->orb_period = period(planet->a, planet->mass, system->star_mass_r);
     planet->day = day_length(system, planet->mass, planet->radius, planet->e,
-			     planet->density, planet->a,
-			     planet->orb_period, planet->gas_giant,
-			     system->star_mass_r);
+           planet->density, planet->a,
+           planet->orb_period, planet->gas_giant,
+           system->star_mass_r);
     planet->resonant_period = system->resonance;
     planet->axial_tilt = inclination(planet->a);
     planet->esc_velocity = escape_velocity(planet->mass, planet->radius);
@@ -116,65 +116,65 @@ planet* generate_stellar_system(stellar_system* system, unsigned long random_see
       planet->surf_pressure = pressure(planet->volatile_gas_inventory, 
                                        planet->radius, planet->surf_grav);
       if ((planet->surf_pressure == 0.0))
-	planet->boil_point = 0.0;
+        planet->boil_point = 0.0;
       else
-	planet->boil_point = boiling_point(planet->surf_pressure);
+        planet->boil_point = boiling_point(planet->surf_pressure);
       iterate_surface_temp(system, &(planet));
     }
-#ifdef	MOON
+#ifdef  MOON
     if (args.make_moon)
     {
 #ifdef  PROPER_MOON
       planet->first_moon = dist_moon_masses(planet->mass,
-					    star_lum_r, planet->e,
-					    0.0, planet_dust_limit(planet->mass));
+              star_lum_r, planet->e,
+              0.0, planet_dust_limit(planet->mass));
 #else
       planet->first_moon = do_dist_moon_masses(planet->mass, planet->radius);
       {
-	planet* moon = planet->first_moon;
+  planet* moon = planet->first_moon;
 
-	while (moon)
-	{
-	  moon->radius = kothari_radius(moon->mass, 0, planet->orbit_zone);
-	  moon->density = volume_density(moon->mass, moon->radius);
-	  moon->density = random_number(1.5, moon->density * 1.1);
-	  if (moon->density < 1.5)
-	    moon->density = 1.5;
-	  moon->radius = volume_radius(moon->mass, moon->density);
-	  moon->orb_period = period(moon->a, moon->mass, planet->mass);
-	  moon->day = day_length(system, moon->mass, moon->radius, moon->e,
-				 moon->density, moon->a,
-				 moon->orb_period, moon->gas_giant,
-				 planet->mass);
-	  moon->resonant_period = system->resonance;
-	  moon->axial_tilt = inclination(moon->a);
-	  moon->esc_velocity = escape_vel(moon->mass, moon->radius);
-	  moon->surf_accel = acceleration(moon->mass, moon->radius);
-	  moon->rms_velocity = rms_vel(system, MOL_NITROGEN, planet->a);
-	  moon->molec_weight = molecule_limit(moon->mass, moon->radius);
-	  moon->surf_grav = gravity(moon->surf_accel);
-	  moon->greenhouse_effect = grnhouse(planet->orbit_zone,
-					     planet->a,
-					     system->r_greenhouse);
-	  moon->volatile_gas_inventory = vol_inventory(moon->mass,
-						       moon->esc_velocity,
-						       moon->rms_velocity,
-						       system->star_mass_r,
-						       planet->orbit_zone,
-						  moon->greenhouse_effect);
-	  moon->surf_pressure = pressure(moon->volatile_gas_inventory,
-					 moon->radius, moon->surf_grav);
-	  if ((moon->surf_pressure == 0.0))
-	    moon->boil_point = 0.0;
-	  else
-	    moon->boil_point = boiling_point(moon->surf_pressure);
-	  iterate_surface_temp_moon(system, &planet, &moon);
-	  moon = moon->next_planet;
-	}
+  while (moon)
+  {
+    moon->radius = kothari_radius(moon->mass, 0, planet->orbit_zone);
+    moon->density = volume_density(moon->mass, moon->radius);
+    moon->density = random_number(1.5, moon->density * 1.1);
+    if (moon->density < 1.5)
+      moon->density = 1.5;
+    moon->radius = volume_radius(moon->mass, moon->density);
+    moon->orb_period = period(moon->a, moon->mass, planet->mass);
+    moon->day = day_length(system, moon->mass, moon->radius, moon->e,
+         moon->density, moon->a,
+         moon->orb_period, moon->gas_giant,
+         planet->mass);
+    moon->resonant_period = system->resonance;
+    moon->axial_tilt = inclination(moon->a);
+    moon->esc_velocity = escape_vel(moon->mass, moon->radius);
+    moon->surf_accel = acceleration(moon->mass, moon->radius);
+    moon->rms_velocity = rms_vel(system, MOL_NITROGEN, planet->a);
+    moon->molec_weight = molecule_limit(moon->mass, moon->radius);
+    moon->surf_grav = gravity(moon->surf_accel);
+    moon->greenhouse_effect = grnhouse(planet->orbit_zone,
+               planet->a,
+               system->r_greenhouse);
+    moon->volatile_gas_inventory = vol_inventory(moon->mass,
+                   moon->esc_velocity,
+                   moon->rms_velocity,
+                   system->star_mass_r,
+                   planet->orbit_zone,
+              moon->greenhouse_effect);
+    moon->surf_pressure = pressure(moon->volatile_gas_inventory,
+           moon->radius, moon->surf_grav);
+    if ((moon->surf_pressure == 0.0))
+      moon->boil_point = 0.0;
+    else
+      moon->boil_point = boiling_point(moon->surf_pressure);
+    iterate_surface_temp_moon(system, &planet, &moon);
+    moon = moon->next_planet;
+  }
       }
-#endif				/* CC_MOON */
+#endif        /* CC_MOON */
     }
-#endif				/* MOON */
+#endif        /* MOON */
   }
   return first_planet;
 }

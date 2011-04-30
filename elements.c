@@ -101,7 +101,7 @@ static char* sort_elements(char *list, int fn(const void *, const void *))
     for (i = 0; i < num; i++)
     {
       if (i)
-	      strcat(list, " ");
+        strcat(list, " ");
 
       strcat(list, vec[i]->symbol);
     }
@@ -124,7 +124,7 @@ char* sort_elements_reverse(char *list)
     for (i = num - 1; i >= 0; i--)
     {
       if (list[0])
-	strcat(list, " ");
+  strcat(list, " ");
       strcat(list, vec[i]->symbol);
     }
   }
@@ -162,7 +162,7 @@ char* find_gas_elements_at_temp(char *out, double temperature)
     if (p->boil >= 0 && p->boil < temperature)
     {
       if (*out)
-	strcat(out, " ");
+        strcat(out, " ");
       strcat(out, p->symbol);
     }
   }
@@ -180,9 +180,9 @@ char* find_liquid_elements_at_temp(char *out, double temperature)
     {
       if (p->boil >= 0 && p->boil > temperature)
       {
-	if (*out)
-	  strcat(out, " ");
-	strcat(out, p->symbol);
+        if (*out)
+          strcat(out, " ");
+        strcat(out, p->symbol);
       }
     }
   }
@@ -199,7 +199,7 @@ char* find_solid_elements_at_temp(char *out, double temperature)
     if (p->melt > 0 && p->melt > temperature)
     {
       if (*out)
-	strcat(out, " ");
+        strcat(out, " ");
       strcat(out, p->symbol);
     }
   }
