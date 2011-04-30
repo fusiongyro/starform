@@ -306,9 +306,9 @@ void coalesce_dust_lanes(accretion* accreting, double body_inner_bound, double b
   {
     // if this node has dust and the node is within the body's inner and outer 
     // boundaries, then there is dust left in this simulation.
-    if (lane->has_dust
-         && lane->outer_edge >= body_inner_bound
-              && lane->inner_edge <= body_outer_bound)
+    if (lane->has_dust && 
+        lane->outer_edge >= body_inner_bound && 
+        lane->inner_edge <= body_outer_bound)
       accreting->dust_left = true;
     
     // get the next lane if possible
@@ -317,8 +317,8 @@ void coalesce_dust_lanes(accretion* accreting, double body_inner_bound, double b
     {
       // coalesce these two adjacent dust lanes if they have the same 
       // combination of having or lacking dust and gas
-      if (lane->has_dust == next_lane->has_dust
-           && lane->has_gas == next_lane->has_gas)
+      if (lane->has_dust == next_lane->has_dust && 
+          lane->has_gas  == next_lane->has_gas)
       {
         lane->outer_edge = next_lane->outer_edge;
         lane->next_band = next_lane->next_band;
@@ -356,7 +356,7 @@ void update_dust_lanes(accretion *accreting,
 
 // based on the last mass and the a and e of the new mass, fix the reduced mass 
 // and inner/outer effect limits of the accretion process.
-void fixup_accretion_parameters(accretion *accreting, 
+void fixup_accretion_parameters(accretion *acc, 
         double last_mass, double a, double e)
 {
   double temperature;
@@ -364,15 +364,15 @@ void fixup_accretion_parameters(accretion *accreting,
   temperature = last_mass / (1.0 + last_mass);
   
   // 4th root of the last mass / 1 + last mass: reduced mass
-  accreting->reduced_mass = pow(temperature, (1.0 / 4.0));
+  acc->reduced_mass = pow(temperature, (1.0 / 4.0));
   
   // recalculate the inner and outer radii based on the reduced mass
-  accreting->r_inner = inner_effect_limit(accreting, a, e, accreting->reduced_mass);
-  accreting->r_outer = outer_effect_limit(accreting, a, e, accreting->reduced_mass);
+  acc->r_inner = inner_effect_limit(acc, a, e, acc->reduced_mass);
+  acc->r_outer = outer_effect_limit(acc, a, e, acc->reduced_mass);
   
   // fix up the inner radius to be no less than zero
-  if (accreting->r_inner < 0.0)
-    accreting->r_inner = 0.0;
+  if (acc->r_inner < 0.0)
+    acc->r_inner = 0.0;
 }
   
 double collect_dust(accretion *accreting, 
@@ -399,8 +399,8 @@ double collect_dust(accretion *accreting,
     
   // if the outer edge exceeds the accretion inner limit or the inner edge is 
   // outside the outer limit, just collect the dust from the next band
-    if (dust_band->outer_edge <= accreting->r_inner
-         || dust_band->inner_edge >= accreting->r_outer)
+    if (dust_band->outer_edge <= accreting->r_inner || 
+        dust_band->inner_edge >= accreting->r_outer)
       return collect_dust(accreting, last_mass, a, e, crit_mass, dust_band->next_band);
     else
     {
@@ -409,17 +409,17 @@ double collect_dust(accretion *accreting,
       
       double width = bandwidth - (outer_gap < 0.0 ? 0.0 : outer_gap);
 
-    // account for the gap between the inner edge and the start of 
-    // the accretion radius
+      // account for the gap between the inner edge and the start of 
+      // the accretion radius
       double gap = dust_band->inner_edge - accreting->r_inner;
       width = width - (gap < 0.0 ? 0.0 : gap);
 
-    // calculate the area of a cross-section, and the volume
+      // calculate the area of a cross-section, and the volume
       double area = 4.0 * PI * pow(a, 2.0) * accreting->reduced_mass
           * (1.0 - e * ((outer_gap < 0.0 ? 0.0 : outer_gap) - (gap < 0.0 ? 0.0 : gap)) / bandwidth);
       double volume = area * width;
 
-    // calculate the total mass of this lane plus the mass of the next lane
+      // calculate the total mass of this lane plus the mass of the next lane
       return volume * mass_density
              + collect_dust(accreting, last_mass, a, e, crit_mass,
                              dust_band->next_band);
@@ -622,7 +622,7 @@ planet* distribute_planetary_masses(
                                star_lum_r,
                                planet_inner_bound, planet_outer_bound);
       else
-	      verbose_print(".. failed due to large neighbor.\n");
+        verbose_print(".. failed due to large neighbor.\n");
     }
     verbose_print(".. failed.\n");
   }

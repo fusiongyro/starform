@@ -180,7 +180,7 @@ double day_length(stellar_system* system,
   equatorial_radius_in_cm = radius * CM_PER_KM;
   year_in_hours = orb_period * 24.0;
   base_angular_velocity = sqrt(2.0 * J * (planetary_mass_in_grams) /
-			       (k2 * pow2(equatorial_radius_in_cm)));
+             (k2 * pow2(equatorial_radius_in_cm)));
 /*  This next calculation determines how much the planet's rotation is      */
 /*  slowed by the presence of the star.                                     */
   change_in_angular_velocity = CHANGE_IN_EARTH_ANG_VEL *
@@ -256,7 +256,7 @@ double rms_velocity(stellar_system* system,
   exospheric_temp = EARTH_EXOSPHERE_TEMP / pow2(orb_radius);
   exospheric_temp *= sqrt(system->star_lum_r);
   return (sqrt((3.0 * MOLAR_GAS_CONST * exospheric_temp) / molecular_weight)
-	  * CM_PER_METER);
+    * CM_PER_METER);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -273,7 +273,7 @@ double molecule_limit(double mass, double equat_radius)
 
   esc_velocity = escape_velocity(mass, equat_radius);
   return ((3.0 * pow2(GAS_RETENTION_THRESHOLD * CM_PER_METER) * 
-	   MOLAR_GAS_CONST * EARTH_EXOSPHERE_TEMP) / pow2(esc_velocity));
+     MOLAR_GAS_CONST * EARTH_EXOSPHERE_TEMP) / pow2(esc_velocity));
 }
 
 /*--------------------------------------------------------------------------*/
@@ -285,7 +285,7 @@ double molecule_limit(double mass, double equat_radius)
 double acceleration(double mass, double radius)
 {
   return (GRAV_CONSTANT * (mass * SOLAR_MASS_IN_GRAMS) /
-	  pow2(radius * CM_PER_KM));
+    pow2(radius * CM_PER_KM));
 }
 
 /*--------------------------------------------------------------------------*/
@@ -460,8 +460,8 @@ double ice_fraction(double water_fraction, double surf_temp)
 double eff_temp(double ecosphere_radius, double orb_radius, double albedo)
 {
   return (sqrt(ecosphere_radius / orb_radius)
-	  * pow1_4((1.0 - albedo) / 0.7)
-	  * EARTH_EFFECTIVE_TEMP);
+    * pow1_4((1.0 - albedo) / 0.7)
+    * EARTH_EFFECTIVE_TEMP);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -609,29 +609,32 @@ void iterate_surface_temp(stellar_system* system, planet** planet)
   optical_depth = opacity((*planet)->molec_weight, (*planet)->surf_pressure);
   effective_temp = eff_temp(system->r_ecosphere, (*planet)->a, EARTH_ALBEDO);
   greenhs_rise = green_rise(optical_depth, effective_temp,
-			    (*planet)->surf_pressure);
+          (*planet)->surf_pressure);
   surf1_temp = effective_temp + greenhs_rise;
   do
   {
     previous_temp = surf1_temp;
     water = water_fraction((*planet)->volatile_gas_inventory,
-			   (*planet)->radius);
+         (*planet)->radius);
     clouds = cloud_fraction(surf1_temp,
-			    (*planet)->molec_weight,
-			    (*planet)->radius, water);
+          (*planet)->molec_weight,
+          (*planet)->radius, water);
     ice = ice_fraction(water, surf1_temp);
     if ((surf1_temp >= (*planet)->boil_point) ||
-	(surf1_temp <= FREEZING_POINT_OF_WATER))
+        (surf1_temp <= FREEZING_POINT_OF_WATER))
       water = 0.0;
     albedo = planet_albedo(water, clouds, ice, (*planet)->surf_pressure);
+    
     if (num_iter++ > 1000)
       break;
+    
     optical_depth = opacity((*planet)->molec_weight, (*planet)->surf_pressure);
     effective_temp = eff_temp(system->r_ecosphere, (*planet)->a, albedo);
     greenhs_rise = green_rise(optical_depth, effective_temp,
-			      (*planet)->surf_pressure);
+            (*planet)->surf_pressure);
     surf1_temp = effective_temp + greenhs_rise;
   } while (fabs(surf1_temp - previous_temp) > 1.0);
+  
   (*planet)->hydrosphere = water;
   (*planet)->cloud_cover = clouds;
   (*planet)->ice_cover = ice;
@@ -655,19 +658,19 @@ void iterate_surface_temp_moon(stellar_system* system, planet** primary, planet*
   optical_depth = opacity((*planet)->molec_weight, (*planet)->surf_pressure);
   effective_temp = eff_temp(system->r_ecosphere, (*primary)->a, EARTH_ALBEDO);
   greenhs_rise = green_rise(optical_depth, effective_temp,
-			    (*planet)->surf_pressure);
+          (*planet)->surf_pressure);
   surf1_temp = effective_temp + greenhs_rise;
   do
   {
     previous_temp = surf1_temp;
     water = water_fraction((*planet)->volatile_gas_inventory,
-			   (*planet)->radius);
+         (*planet)->radius);
     clouds = cloud_fraction(surf1_temp,
-			    (*planet)->molec_weight,
-			    (*planet)->radius, water);
+          (*planet)->molec_weight,
+          (*planet)->radius, water);
     ice = ice_fraction(water, surf1_temp);
     if ((surf1_temp >= (*planet)->boil_point) ||
-	(surf1_temp <= FREEZING_POINT_OF_WATER))
+        (surf1_temp <= FREEZING_POINT_OF_WATER))
       water = 0.0;
     albedo = planet_albedo(water, clouds, ice, (*planet)->surf_pressure);
     if (num_iter++ > 1000)
@@ -675,9 +678,10 @@ void iterate_surface_temp_moon(stellar_system* system, planet** primary, planet*
     optical_depth = opacity((*planet)->molec_weight, (*planet)->surf_pressure);
     effective_temp = eff_temp(system->r_ecosphere, (*primary)->a, albedo);
     greenhs_rise = green_rise(optical_depth, effective_temp,
-			      (*planet)->surf_pressure);
+            (*planet)->surf_pressure);
     surf1_temp = effective_temp + greenhs_rise;
   } while (fabs(surf1_temp - previous_temp) > 1.0);
+ 
   (*planet)->hydrosphere = water;
   (*planet)->cloud_cover = clouds;
   (*planet)->ice_cover = ice;

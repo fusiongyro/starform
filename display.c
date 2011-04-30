@@ -1,16 +1,16 @@
-#include	<stdio.h>
-#include	<string.h>
+#include  <stdio.h>
+#include  <string.h>
 #include        <math.h>
 
-#include	"structs.h"
-#include	"const.h"
+#include  "structs.h"
+#include  "const.h"
 
 #include "elements.h"
 #include "enviro.h"
 #include "gensys.h"
 
-#define	MAX_EXP_DIGS	3
-#define	MAX_MAN_DIGS	20
+#define  MAX_EXP_DIGS  3
+#define  MAX_MAN_DIGS  20
 
 extern flags args;
 
@@ -67,7 +67,7 @@ char* engineer_notation(double d, int p)
   {
     exponent = (int)log10(d);
 
-    if (exponent == 0 && d < 1.0)	/* log10 sometimes lies */
+    if (exponent == 0 && d < 1.0)  /* log10 sometimes lies */
     {
       --exponent;
       --p;
@@ -89,14 +89,14 @@ char* engineer_notation(double d, int p)
       p--;
 
       if (expsign == '-')
-	++exponent;
+        ++exponent;
       else
-	--exponent;
+        --exponent;
     }
   }
 
   sprintf(output, "%c%*.*fe%c%*.*d", mansign, p, p, mantissa,
-	  expsign, MAX_EXP_DIGS, MAX_EXP_DIGS, exponent);
+    expsign, MAX_EXP_DIGS, MAX_EXP_DIGS, exponent);
 
   return output;
 }
@@ -189,20 +189,14 @@ void text_list_stuff(
     for (i = 0; i < n; i++)
     {
       if (stuff[i]->melt < 0)
-      {
-	printf("\t\t\t\t%-12s\n", stuff[i]->name);
-      }
+        printf("\t\t\t\t%-12s\n", stuff[i]->name);
       else if (stuff[i]->boil <= 0)
-      {
-	printf("\t\t\t\t%-12s melts at %-4.0f\n",
-	       stuff[i]->name, stuff[i]->melt - 273.15);
-      }
+        printf("\t\t\t\t%-12s melts at %-4.0f\n",
+               stuff[i]->name, stuff[i]->melt - 273.15);
       else
-      {
-	printf("\t\t\t\t%-12s melts at %-4.0f  boils at %.0f\n",
-	       stuff[i]->name, stuff[i]->melt - 273.15,
-	       local_bp(stuff[i]->boil, pressure) - 273.15);
-      }
+        printf("\t\t\t\t%-12s melts at %-4.0f  boils at %.0f\n",
+               stuff[i]->name, stuff[i]->melt - 273.15,
+               local_bp(stuff[i]->boil, pressure) - 273.15);
     }
   }
 
@@ -219,35 +213,30 @@ void text_list_stuff(
     {
       if (stuff[i]->weight < min_weight)
       {
-	memmove(&stuff[i], &stuff[i + 1], sizeof(stuff[i]) * (n - i));
-	n--;
-	i--;
+        memmove(&stuff[i], &stuff[i + 1], sizeof(stuff[i]) * (n - i));
+        n--;
+        i--;
       }
       else
       {
-	double      vrms = rms_velocity(system, stuff[i]->weight, orbital_radius);
-	double      pvrms = pow(1 / (1 + vrms / escape_vel), star_age / 1e9);
-	double      P = pressure / 1000;
+        double      vrms = rms_velocity(system, stuff[i]->weight, orbital_radius);
+        double      pvrms = pow(1 / (1 + vrms / escape_vel), star_age / 1e9);
+        double      P = pressure / 1000;
 
-	amount[i] = /* stuff[i]->abunde */ stuff[i]->abunds;
-	amount[i] *= pvrms;
-	if (strcmp(stuff[i]->symbol, "O") == 0 && star_age > 2e9 &&
-	    temperature > 270 && temperature < 400)
-	{
-	  amount[i] *= pow(1 / (1 + stuff[i]->reactivity), 
-			   sqrt(sqrt(star_age/2e9)) * (0.7 + P/2));
-	}
-	else if (strcmp(stuff[i]->symbol, "Ar") == 0)
-	{
-	  amount[i] = stuff[i]->abunde * pvrms * star_age/4e9;
-	}
-	else
-	{
-	  amount[i] *= pow(1 / (1 + stuff[i]->reactivity), 
-			   star_age/2e9 * (0.7 + P));
-	}
-	amount[i] *= (1 - min_weight / stuff[i]->weight);
-	totamount += amount[i];
+        amount[i] = /* stuff[i]->abunde */ stuff[i]->abunds;
+        amount[i] *= pvrms;
+        if (strcmp(stuff[i]->symbol, "O") == 0 && star_age > 2e9 &&
+            temperature > 270 && temperature < 400)
+          amount[i] *= pow(1 / (1 + stuff[i]->reactivity), 
+               sqrt(sqrt(star_age/2e9)) * (0.7 + P/2));
+        else if (strcmp(stuff[i]->symbol, "Ar") == 0)
+          amount[i] = stuff[i]->abunde * pvrms * star_age/4e9;
+        else
+          amount[i] *= pow(1 / (1 + stuff[i]->reactivity), 
+               star_age/2e9 * (0.7 + P));
+
+        amount[i] *= (1 - min_weight / stuff[i]->weight);
+        totamount += amount[i];
       }
     }
 
@@ -255,13 +244,11 @@ void text_list_stuff(
     {
       printf("   gasses in atmosphere:\n");
       for (i = 0; i < n; i++)
-      {
-	if (100 * amount[i] / totamount > 0.05)
-	  printf("\t\t\t\t%-16s %4.1f%%  PP %6.1f mb\n",
-		 stuff[i]->name,
-		 100 * amount[i] / totamount,
-		 pressure * amount[i] / totamount);
-      }
+        if (100 * amount[i] / totamount > 0.05)
+          printf("\t\t\t\t%-16s %4.1f%%  PP %6.1f mb\n",
+           stuff[i]->name,
+           100 * amount[i] / totamount,
+           pressure * amount[i] / totamount);
     }
   }
 }
@@ -290,10 +277,10 @@ void text_describe_planet(stellar_system *system, char *start, planet* node1)
 
   if (node1->mass * SUN_MASS_IN_EARTH_MASSES < 0.01)
     printf("   Mass:\t\t\t1/%0.4g\tEarth masses\n",
-	   1.0 / (SUN_MASS_IN_EARTH_MASSES * node1->mass));
+     1.0 / (SUN_MASS_IN_EARTH_MASSES * node1->mass));
   else
     printf("   Mass:\t\t\t%5.3f\tEarth masses\n",
-	   node1->mass * SUN_MASS_IN_EARTH_MASSES);
+     node1->mass * SUN_MASS_IN_EARTH_MASSES);
 
   printf("   Equatorial radius:\t\t%3.1f\tkm\n", node1->radius);
   printf("   Density:\t\t\t%5.3f\tgrams/cc\n", node1->density);
@@ -303,33 +290,33 @@ void text_describe_planet(stellar_system *system, char *start, planet* node1)
   {
     printf("   Surface gravity:\t\t%4.2f\tEarth gees\n", node1->surf_grav);
     printf("   Surface pressure:\t\t%5.3f\tEarth atmospheres",
-	   (node1->surf_pressure / 1000.0));
+     (node1->surf_pressure / 1000.0));
     if ((node1->greenhouse_effect) && (node1->surf_pressure > 0.0))
       printf("    GREENHOUSE EFFECT\n");
     else
       printf("\n");
     printf("   Surface temperature:\t\t%4.2f\tdegrees Celcius\n",
-	   (node1->surf_temp - KELVIN_CELCIUS_DIFFERENCE));
+     (node1->surf_temp - KELVIN_CELCIUS_DIFFERENCE));
     {
       temperature t = get_temp_range(node1);
       if (fabs(t.high - t.max) > 10 || fabs(t.low - t.min) > 10)
       {
-	printf("   Normal daytime temperature:\t%4.2f\tdegrees Celcius\n",
-	    t.high - KELVIN_CELCIUS_DIFFERENCE);
-	printf("   Normal night temperature:\t%4.2f\tdegrees Celcius\n",
-	    t.low - KELVIN_CELCIUS_DIFFERENCE);
+        printf("   Normal daytime temperature:\t%4.2f\tdegrees Celcius\n",
+            t.high - KELVIN_CELCIUS_DIFFERENCE);
+        printf("   Normal night temperature:\t%4.2f\tdegrees Celcius\n",
+            t.low - KELVIN_CELCIUS_DIFFERENCE);
       }
       printf("   Maximum temperature:   \t%4.2f\tdegrees Celcius\n",
-	     t.max - KELVIN_CELCIUS_DIFFERENCE);
+       t.max - KELVIN_CELCIUS_DIFFERENCE);
       printf("   Minimum temperature:   \t%4.2f\tdegrees Celcius\n",
-	     t.min - KELVIN_CELCIUS_DIFFERENCE);
+       t.min - KELVIN_CELCIUS_DIFFERENCE);
     }
   }
 
   printf("   Escape Velocity:\t\t%4.2f\tkm/sec\n",
-	 node1->esc_velocity / CM_PER_KM);
+   node1->esc_velocity / CM_PER_KM);
   printf("   Molecular weight retained:\t%4.2f and above\n",
-	 node1->molec_weight);
+   node1->molec_weight);
   printf("   Surface acceleration:\t%4.2f\tcm/sec2\n", node1->surf_accel);
   printf("   Axial tilt:\t\t\t%d\tdegrees\n", node1->axial_tilt);
   printf("   Planetary albedo:\t\t%5.3f\n", node1->albedo);
@@ -339,18 +326,18 @@ void text_describe_planet(stellar_system *system, char *start, planet* node1)
   if (!(node1->gas_giant))
   {
     printf("   Boiling point of water:\t%3.1f\tdegrees Celcius\n",
-	   (node1->boil_point - KELVIN_CELCIUS_DIFFERENCE));
+     (node1->boil_point - KELVIN_CELCIUS_DIFFERENCE));
     printf("   Hydrosphere percentage:\t%4.2f\n",
-	   (node1->hydrosphere * 100.0));
+     (node1->hydrosphere * 100.0));
     printf("   Cloud cover percentage:\t%4.2f\n",
-	   (node1->cloud_cover * 100));
+     (node1->cloud_cover * 100));
     printf("   Ice cover percentage:\t%4.2f\n", (node1->ice_cover * 100));
     text_list_stuff(system, node1->surf_temp - KELVIN_CELCIUS_DIFFERENCE,
-		    node1->molec_weight,
-		    node1->surf_pressure,
-		    node1->a,
-		    node1->esc_velocity,
-		    system->star_age);
+        node1->molec_weight,
+        node1->surf_pressure,
+        node1->a,
+        node1->esc_velocity,
+        system->star_age);
   }
 }
 
@@ -369,7 +356,7 @@ void text_describe_system(stellar_system* system, planet* first_planet)
   printf("Stellar class: %s\n", system->star_class);
 
   printf("Age: %5.3f billion years  (%5.3f billion left on main sequence)\n",
-	 (system->star_age / 1.0E9), (system->main_seq_life - system->star_age) / 1.0E9);
+   (system->star_age / 1.0E9), (system->main_seq_life - system->star_age) / 1.0E9);
   printf("Habitable ecosphere radius: %3.3f AU\n", system->r_ecosphere);
   printf("\n");
   printf("Planets present at:\n");
@@ -394,7 +381,7 @@ void text_describe_system(stellar_system* system, planet* first_planet)
     else if (node1->surf_temp - KELVIN_CELCIUS_DIFFERENCE > 30)
       type = "hot";
     printf("%d\t%7.3f AU\t%s\n",
-	   counter, node1->a, type);
+     counter, node1->a, type);
   }
   printf("\n\n\n");
   for (node1 = first_planet, counter = 1;
@@ -422,42 +409,42 @@ void lisp_describe_planet(planet* node1)
   printf("  (is-gas-giant %d)\n", node1->gas_giant);
   printf("  ; orbital statistics:\n");
   printf("  (mean-orbit-radius %s) ; km\n",
-	 engineer_notation(node1->a * KM_PER_AU, 6));
+   engineer_notation(node1->a * KM_PER_AU, 6));
   printf("  (orbit-eccentricity %s)\n",
-	 engineer_notation(node1->e, 6));
+   engineer_notation(node1->e, 6));
   printf("  (axial-tilt %d) ; degrees\n",
-	 node1->axial_tilt);
+   node1->axial_tilt);
   printf("  (orbital-period %s) ; Earth days\n",
-	 engineer_notation(node1->orb_period, 6));
+   engineer_notation(node1->orb_period, 6));
   printf("  (rotation-period %s) ; Earth hours\n",
-	 engineer_notation(node1->day, 6));
+   engineer_notation(node1->day, 6));
   printf("  (is-resonant %d)\n", node1->resonant_period);
   printf("  ; planetary measurements:\n");
   printf("  (mass %s) ; kg\n",
-	 engineer_notation(node1->mass * SOLAR_MASS_IN_GRAMS / 1000.0, 6));
+   engineer_notation(node1->mass * SOLAR_MASS_IN_GRAMS / 1000.0, 6));
   printf("  (equatorial-radius %s) ; km\n", engineer_notation(node1->radius, 6));
   printf("  (density %s) ; g/cm3\n", engineer_notation(node1->density, 6));
   printf("  ; planetary environment:\n");
   printf("  (escape-velocity %s) ; km/sec\n",
-	 engineer_notation(node1->esc_velocity / CM_PER_KM, 6));
+   engineer_notation(node1->esc_velocity / CM_PER_KM, 6));
   printf("  (min-molecular-weight-retained %s)\n",
-	 engineer_notation(node1->molec_weight, 3));
+   engineer_notation(node1->molec_weight, 3));
   printf("  (surface-acceleration %s) ; cm/sec2\n",
-	 engineer_notation(node1->surf_accel, 6));
+   engineer_notation(node1->surf_accel, 6));
   if (!node1->gas_giant)
   {
     printf("  (surface-gravity %s) ; Earth gees\n",
-	   engineer_notation(node1->surf_grav, 3));
+     engineer_notation(node1->surf_grav, 3));
     printf("  (h2o-boils %s) ; degrees celcius\n",
-	   engineer_notation(node1->boil_point - KELVIN_CELCIUS_DIFFERENCE, 3));
+     engineer_notation(node1->boil_point - KELVIN_CELCIUS_DIFFERENCE, 3));
     printf("  (surface-pressure %s) ; Earth atmospheres\n",
-	   engineer_notation(node1->surf_pressure / 1000.0, 3));
+     engineer_notation(node1->surf_pressure / 1000.0, 3));
     if (node1->greenhouse_effect && node1->surf_pressure > 0.0)
       printf("  (greenhouse 1)\n");
     else
       printf("  (greenhouse 0)\n");
     printf("  (surface-temperature %s) ; degrees celcius\n",
-	   engineer_notation(node1->surf_temp - KELVIN_CELCIUS_DIFFERENCE, 3));
+     engineer_notation(node1->surf_temp - KELVIN_CELCIUS_DIFFERENCE, 3));
     printf("  (hydrosphere %s)\n", engineer_notation(node1->hydrosphere, 3));
     printf("  (cloud-cover %s)\n", engineer_notation(node1->cloud_cover, 3));
     printf("  (ice-cover %s)\n",   engineer_notation(node1->ice_cover, 3));
@@ -475,17 +462,17 @@ void lisp_describe_system(stellar_system* system, planet* first_planet)
   printf("  (mass %s) ; kg\n",
    engineer_notation(system->star_mass_r * SOLAR_MASS_IN_GRAMS / 1000.0, 6));
   printf("  (radius %s) ; km\n",
-	 engineer_notation(system->star_radius_r
-			   * SOLAR_RADIUS_IN_METRES / 1000.0, 6));
+   engineer_notation(system->star_radius_r
+         * SOLAR_RADIUS_IN_METRES / 1000.0, 6));
   printf("  (temperature %.0f) ; K\n", system->star_temp);
   printf("  (luminosity %s) ; * SOL luminosity\n",
-	 engineer_notation(system->star_lum_r, 6));
+   engineer_notation(system->star_lum_r, 6));
   printf("  (lifetime %s) ; years\n",
-	 engineer_notation(system->main_seq_life, 6));
+   engineer_notation(system->main_seq_life, 6));
   printf("  (current-age %s) ; years\n",
-	 engineer_notation(system->star_age, 6));
+   engineer_notation(system->star_age, 6));
   printf("  (ecosphere-radius %s) ; km\n",
-	 engineer_notation(system->r_ecosphere * KM_PER_AU, 6));
+   engineer_notation(system->r_ecosphere * KM_PER_AU, 6));
   printf(" )\n");
   for (node1 = first_planet, counter = 1;
        node1 != NULL;
