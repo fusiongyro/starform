@@ -26,10 +26,6 @@ int main(int argc, char **argv)
         args.make_moon = true;
         break;
         
-      case 'l':         /* set lisp output */
-        args.display_lisp = true;
-        break;
-        
       case 's':         /* set random seed */
         random_seed = strtoul(&(*++c), NULL, 0);
         skip = true;

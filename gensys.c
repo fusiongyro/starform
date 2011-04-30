@@ -11,10 +11,7 @@
 
 void display_banner()
 {
-  if (args.display_lisp)
-    printf("(Accrete (version %s))\n", "4.0");
-  else
-    printf("Accrete - V%s\n", "4.0");
+  printf("Accrete - V%s\n", "4.0");
 }
 
 // seed the random number generator with this random seed, or the current time

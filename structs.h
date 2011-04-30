@@ -37,7 +37,6 @@ typedef struct planet_s
 typedef struct 
 {
   bool make_moon;
-  bool display_lisp;
   bool verbose;
 } flags;
 
