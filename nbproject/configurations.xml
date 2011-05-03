@@ -2,7 +2,11 @@
 <configurationDescriptor version="79">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <df name="starform" root=".">
-      <df name="runs">
+      <df name="tests">
+        <df name="9c-mac-x86">
+        </df>
+        <df name="gcc-mac-x64">
+        </df>
       </df>
       <in>accrete.c</in>
       <in>accrete.h</in>

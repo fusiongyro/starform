@@ -40,6 +40,7 @@ int main(int argc, char **argv)
         skip = true;
         break;
         
+      case 'h':
       case '?':
       default:
         fprintf(stderr, "%s: Usage: %s [-l] [-s#] [-v] [-m] [-n#]\n",
@@ -51,9 +52,9 @@ int main(int argc, char **argv)
   // generate N stars
   while (nstars-- > 0)
   {
-    stellar_system system;
-    planet* first_planet = generate_stellar_system(&system, random_seed);
-    display_system(&system, first_planet);
+    stellar_system *system = generate_stellar_system(random_seed);
+    display_system(system);
+    //free_stellar_system(system);
   }
   return 0;
 }
