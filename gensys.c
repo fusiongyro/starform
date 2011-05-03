@@ -32,12 +32,13 @@ void setup_seed(stellar_system* system, unsigned long random_seed)
   system->random_seed = random_seed;
 }
 
-planet* generate_stellar_system(stellar_system* system, unsigned long random_seed)
+stellar_system* generate_stellar_system(unsigned long random_seed)
 {
-  planet* first_planet;
   planet* planet;
   double      outer_dust_limit;
 
+  stellar_system *system = malloc(sizeof(stellar_system));
+  system->first_planet = NULL;
   setup_seed(system, random_seed);
 
   system->star_mass_r = random_number(0.6, 1.3);  /* was 0.6, 1.3 */
@@ -52,7 +53,7 @@ planet* generate_stellar_system(stellar_system* system, unsigned long random_see
   system->star_temp = floor(system->star_temp);
   sprintf(system->star_class, "%.16s", find_star_class(system->star_temp));
   outer_dust_limit = stellar_dust_limit(system->star_mass_r);
-  first_planet = distribute_planetary_masses(system, 0.0, outer_dust_limit);
+  system->first_planet = distribute_planetary_masses(system, 0.0, outer_dust_limit);
   system->main_seq_life = 1.0E10 * (system->star_mass_r / system->star_lum_r);
   if (system->main_seq_life > 6.0E9)
     system->star_age = random_number(1.0E9, 6.0E9);
@@ -62,7 +63,7 @@ planet* generate_stellar_system(stellar_system* system, unsigned long random_see
     system->star_age = random_number(system->main_seq_life/10, system->main_seq_life);
   system->r_ecosphere = sqrt(system->star_lum_r);
   system->r_greenhouse = system->r_ecosphere * GREENHOUSE_EFFECT_CONST;
-  for (planet = first_planet; planet != NULL; planet = planet->next_planet)
+  for (planet = system->first_planet; planet != NULL; planet = planet->next_planet)
   {
     planet->orbit_zone = orbital_zone(system, planet->a);
     if (planet->gas_giant)
@@ -173,6 +174,21 @@ planet* generate_stellar_system(stellar_system* system, unsigned long random_see
     }
 #endif        /* MOON */
   }
-  return first_planet;
+  return system;
 }
 
+void free_stellar_system(stellar_system* system)
+{
+  // first, free all the planets
+  planet *p, *q = NULL;
+  for (p = system->first_planet;
+       p != NULL; 
+       p = q)
+  {
+    q = p->next_planet;
+    free(p);
+  }
+  
+  // now, free the system
+  free(system);
+}

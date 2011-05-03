@@ -247,10 +247,8 @@ void list_chemical_composition(stellar_system* system,
   }
 }
 
-void text_describe_planet(stellar_system *system, char *start, planet* node1)
+void text_describe_planet(stellar_system *system, planet* node1)
 {
-  start = start;
-
   if (node1->gas_giant)
     printf("*gas giant*\n");
   else
@@ -335,7 +333,7 @@ void text_describe_planet(stellar_system *system, char *start, planet* node1)
   }
 }
 
-void display_system(stellar_system* system, planet* first_planet)
+void display_system(stellar_system* system)
 {
   planet* node1;
   int         counter;
@@ -354,7 +352,7 @@ void display_system(stellar_system* system, planet* first_planet)
   printf("Habitable ecosphere radius: %3.3f AU\n", system->r_ecosphere);
   printf("\n");
   printf("Planets present at:\n");
-  for (node1 = first_planet, counter = 1;
+  for (node1 = system->first_planet, counter = 1;
        node1 != NULL;
        node1 = node1->next_planet, counter++)
   {
@@ -378,7 +376,7 @@ void display_system(stellar_system* system, planet* first_planet)
      counter, node1->a, type);
   }
   printf("\n\n\n");
-  for (node1 = first_planet, counter = 1;
+  for (node1 = system->first_planet, counter = 1;
        node1 != NULL;
        node1 = node1->next_planet, counter++)
   {
@@ -386,12 +384,12 @@ void display_system(stellar_system* system, planet* first_planet)
     int         num = 0;
 
     printf("Planet %d\t", counter);
-    text_describe_planet(system, "", node1);
+    text_describe_planet(system, node1);
     for (moon = node1->first_moon; moon; moon = moon->next_planet)
     {
       num++;
       printf("\n  Moon %d-%d\t", counter, num);
-      text_describe_planet(system, "  ", moon);
+      text_describe_planet(system, moon);
     }
     printf("\n\n");
   }
