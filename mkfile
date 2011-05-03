@@ -15,4 +15,16 @@ OFILES=\
 	steltype.$O\
 	utils.$O
 
+HFILES=\
+	accrete.h\
+	const.h\
+	display.h\
+	elements.h\
+	enviro.h\
+	gensys.h\
+	steltype.h\
+	structs.h\
+	utils.h
+
+
 <$PLAN9/src/mkone
