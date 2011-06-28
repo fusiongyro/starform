@@ -96,9 +96,4 @@ val BETA_20 = 5.71E12
 val Q1_36 = 1.258E19      (* grams    *)
 val Q2_36 = 0.0698        (* 1/Kelvin *)
 
-(* macros: *)
-fun pow2 a : real = a * a
-fun pow3 a : real = a * a * a
-fun pow1_4 a = Math.sqrt(Math.sqrt(a))
-
 end
