@@ -1,0 +1,8 @@
+syntax: glob
+
+*.o
+starform
+o.starform
+.depend
+nbproject/private
+.cm/
