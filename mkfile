@@ -1,8 +1,5 @@
 <$PLAN9/src/mkhdr
 
-LDFLAGS=-lm
-CFLAGS=-Wall -g -std=c99
-
 TARG=starform
 
 OFILES=\
@@ -28,3 +25,5 @@ HFILES=\
 
 
 <$PLAN9/src/mkone
+
+CFLAGS = -Wall -g -std=c99
