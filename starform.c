@@ -54,7 +54,7 @@ int main(int argc, char **argv)
   {
     stellar_system *system = generate_stellar_system(random_seed);
     display_system(system);
-    //free_stellar_system(system);
+    free_stellar_system(system);
   }
   return 0;
 }
