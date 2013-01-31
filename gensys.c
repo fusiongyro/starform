@@ -113,7 +113,7 @@ stellar_system* generate_stellar_system(unsigned long random_seed)
                                                      planet->greenhouse_effect);
       planet->surf_pressure = pressure(planet->volatile_gas_inventory, 
                                        planet->radius, planet->surf_grav);
-      if ((planet->surf_pressure == 0.0))
+      if (planet->surf_pressure == 0.0)
         planet->boil_point = 0.0;
       else
         planet->boil_point = boiling_point(planet->surf_pressure);
